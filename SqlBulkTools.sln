@@ -14,6 +14,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlBulkTools.NetStandard.IntegrationTests", "SqlBulkTools.NetStandard.IntegrationTests\SqlBulkTools.NetStandard.IntegrationTests.csproj", "{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2A3761DD-C226-4B92-969E-D2BAA3F44707}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{8201088C-2B38-4AC8-A5C1-9FA2A87C4493}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +43,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8201088C-2B38-4AC8-A5C1-9FA2A87C4493} = {2A3761DD-C226-4B92-969E-D2BAA3F44707}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B0A0416-D96B-455C-BC1A-C69A7ED35A6D}

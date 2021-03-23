@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.2</LangVersion>
-    <Version>2.2.3</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>true</DebugSymbols>
@@ -15,10 +14,11 @@
 
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Authors>tiagorosendo, zek99, gtaylor44</Authors>
-    <RepositoryUrl>https://github.com/tiagorosendo/SqlBulkTools</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/tiagorosendo/SqlBulkTools</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/tiagorosendo/SqlBulkTools/blob/master/LICENSE</PackageLicenseUrl>
+    <Authors>fretje, tiagorosendo, zek99, gtaylor44</Authors>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/fretje/SqlBulkTools</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/fretje/SqlBulkTools</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/fretje/SqlBulkTools/blob/master/LICENSE</PackageLicenseUrl>
     <PackageTags>SQL BULK BULKINSERT BULKUPDATE</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
