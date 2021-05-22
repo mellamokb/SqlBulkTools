@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2047
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlBulkTools.NetStandard", "SqlBulkTools.NetStandard\SqlBulkTools.NetStandard.csproj", "{CE4F978A-AE8A-4F7B-8A2D-3E5A4B00D18F}"
 EndProject
@@ -10,6 +10,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F2D7AF6D-F749-4A80-9575-CF9AF919450D}"
 	ProjectSection(SolutionItems) = preProject
 		.travis.yml = .travis.yml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlBulkTools.NetStandard.IntegrationTests", "SqlBulkTools.NetStandard.IntegrationTests\SqlBulkTools.NetStandard.IntegrationTests.csproj", "{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2A3761DD-C226-4B92-969E-D2BAA3F44707}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{8201088C-2B38-4AC8-A5C1-9FA2A87C4493}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
 EndProject
 Global
@@ -26,9 +36,16 @@ Global
 		{F1E1BFDA-3509-477F-8CF6-A8CA312D60E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1E1BFDA-3509-477F-8CF6-A8CA312D60E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1E1BFDA-3509-477F-8CF6-A8CA312D60E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8201088C-2B38-4AC8-A5C1-9FA2A87C4493} = {2A3761DD-C226-4B92-969E-D2BAA3F44707}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B0A0416-D96B-455C-BC1A-C69A7ED35A6D}

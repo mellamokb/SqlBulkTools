@@ -8,16 +8,17 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Authors>tiagorosendo, zek99, gtaylor44</Authors>
-    <RepositoryUrl>https://github.com/tiagorosendo/SqlBulkTools</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/tiagorosendo/SqlBulkTools</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/tiagorosendo/SqlBulkTools/blob/master/LICENSE</PackageLicenseUrl>
+    <Authors>fretje, tiagorosendo, zek99, gtaylor44</Authors>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/fretje/SqlBulkTools</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/fretje/SqlBulkTools</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/fretje/SqlBulkTools/blob/master/LICENSE</PackageLicenseUrl>
     <PackageTags>SQL BULK BULKINSERT BULKUPDATE</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
