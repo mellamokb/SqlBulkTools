@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using Microsoft.SqlServer.Types;
+using SqlBulkTools.Core;
 using SqlBulkTools.Enumeration;
 using SqlBulkTools.IntegrationTests.Data;
 using SqlBulkTools.TestCommon;
@@ -112,6 +113,56 @@ namespace SqlBulkTools.IntegrationTests
             }
 
             Assert.True(_dataAccess.GetComplexTypeModelCount() > 0);
+        }
+
+        [Fact]
+        public void SqlBulkTools_BulkInsertForDeepComplexTypeWithoutAttribute_AddAllColumns()
+        {
+            var bulk = new BulkOperations();
+            var complexTypeModelList = new List<ComplexTypeModelWithoutAttribute>();
+
+            for (var i = 0; i < 30; i++)
+            {
+                complexTypeModelList.Add(new ComplexTypeModelWithoutAttribute
+                {
+                    AverageEstimate = new EstimatedStatsWithoutAttribute
+                    {
+                        TotalCost = 23.20
+                    },
+                    MinEstimate = new EstimatedStatsWithoutAttribute
+                    {
+                        TotalCost = 10.20
+                    },
+                    Competition = 30,
+                    SearchVolume = 234.34
+                });
+            }
+            BulkOperationsUtility.RegisterComplexType<EstimatedStatsWithoutAttribute>();
+
+            using (var trans = new TransactionScope())
+            {
+                using (var conn = new SqlConnection(_dataAccess.ConnectionString))
+                {
+                    _ = bulk.Setup<ComplexTypeModelWithoutAttribute>()
+                        .ForDeleteQuery()
+                        .WithTable("ComplexTypeWithoutAttributeTest")
+                        .Delete()
+                        .AllRecords()
+                        .Commit(conn);
+
+                    _ = bulk.Setup<ComplexTypeModelWithoutAttribute>()
+                        .ForCollection(complexTypeModelList)
+                        .WithTable("ComplexTypeWithoutAttributeTest")
+                        .AddAllColumns()
+                        .BulkInsert()
+                        .SetIdentityColumn(x => x.Id)
+                        .Commit(conn);
+                }
+
+                trans.Complete();
+            }
+
+            Assert.True(_dataAccess.GetComplexTypeWithoutAttributeModelCount() > 0);
         }
 
         [Fact]

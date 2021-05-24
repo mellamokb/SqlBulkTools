@@ -50,6 +50,18 @@ IF EXISTS (
 		SELECT * 
 		FROM INFORMATION_SCHEMA.ROUTINES
 		WHERE SPECIFIC_CATALOG = 'SqlBulkTools'
+		AND SPECIFIC_NAME = 'GetComplexWithoutAttributeModelCount'
+		)
+		BEGIN
+			DROP PROCEDURE dbo.GetComplexWithoutAttributeModelCount
+		END
+
+GO
+
+IF EXISTS (
+		SELECT * 
+		FROM INFORMATION_SCHEMA.ROUTINES
+		WHERE SPECIFIC_CATALOG = 'SqlBulkTools'
 		AND SPECIFIC_NAME = 'GetComplexModelList'
 		)
 		BEGIN
@@ -148,6 +160,16 @@ IF EXISTS(
 		)
 		BEGIN
 			DROP TABLE dbo.ComplexTypeTest
+		END
+
+IF EXISTS(
+		SELECT * 
+		FROM INFORMATION_SCHEMA.TABLES
+		WHERE TABLE_CATALOG = 'SqlBulkTools'
+		AND TABLE_NAME = 'ComplexTypeWithoutAttributeTest'
+		)
+		BEGIN
+			DROP TABLE dbo.ComplexTypeWithoutAttributeTest
 		END
 
 IF EXISTS(
@@ -264,7 +286,23 @@ CREATE TABLE [dbo].[ComplexTypeTest](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
+GO
 
+CREATE TABLE [dbo].[ComplexTypeWithoutAttributeTest](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[MinEstimate_TotalCost] float NOT NULL,
+	[MinEstimate_CreationDate] DateTime NOT NULL,
+	[AverageEstimate_TotalCost] float NOT NULL,
+	[AverageEstimate_CreationDate] DateTime NOT NULL,
+	[SearchVolume] float NOT NULL,
+	[Competition] float NOT NULL,
+ CONSTRAINT [PK_dbo.ComplexTypeWithoutAttributeTest] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
 
 CREATE TABLE [AnotherSchema].[SchemaTest](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
@@ -447,6 +485,20 @@ BEGIN
 
     SELECT COUNT(*)
 	FROM ComplexTypeTest
+END
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE GetComplexWithoutAttributeModelCount
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+    SELECT COUNT(*)
+	FROM ComplexTypeWithoutAttributeTest
 END
 GO
 

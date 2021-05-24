@@ -99,6 +99,15 @@ namespace SqlBulkTools.IntegrationTests.Data
                 .ExecuteScalar<int>("dbo.GetComplexModelCount");
         }
 
+        public int GetComplexTypeWithoutAttributeModelCount()
+        {
+            ICraneAccess dataAccess = new SqlServerAccess(ConnectionString);
+
+            return dataAccess
+                .Query()
+                .ExecuteScalar<int>("dbo.GetComplexWithoutAttributeModelCount");
+        }
+
         public void ReseedBookIdentity(int idStart)
         {
             ICraneAccess dataAccess = new SqlServerAccess(ConnectionString);

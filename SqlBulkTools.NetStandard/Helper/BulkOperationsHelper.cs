@@ -503,7 +503,7 @@ namespace SqlBulkTools
                     memberExpr =
                         ((UnaryExpression) lambda.Body).Operand as MemberExpression;
 
-                    if (memberExpr?.Expression.Type.GetCustomAttribute(typeof(ComplexTypeAttribute)) != null
+                    if (memberExpr is object && memberExpr.Expression.Type.IsComplexType()
                         && memberExpr.Expression is MemberExpression expression)
                         return $"{expression.Member.Name}_{memberExpr.Member.Name}";
                     break;
@@ -536,11 +536,7 @@ namespace SqlBulkTools
 
             foreach (var property in propertyInfoList)
             {
-                //TODO: Put some cache here.
-                
-                var complexTypeAttr = property.PropertyType.GetCustomAttribute(typeof(ComplexTypeAttribute));
-
-                if (complexTypeAttr != null)
+                if (property.PropertyType.IsComplexType())
                 {
                     var complexPropertyInfoList = property.PropertyType.ToPropInfoList();
 
@@ -614,10 +610,6 @@ namespace SqlBulkTools
             IEnumerable<T> list, HashSet<string> columns, Dictionary<string, int> ordinalDic,
             Dictionary<int, T> outputIdentityDic = null)
         {
-            var propertyCustomAttributeDictionary
-                = propertyInfoList.ToDictionary(pi => pi,
-                    pi => pi.PropertyType.GetCustomAttribute(typeof(ComplexTypeAttribute)));
-
             var internalIdCounter = 0;
 
             foreach (var item in list)
@@ -627,8 +619,7 @@ namespace SqlBulkTools
                 {
                     foreach (var property in propertyInfoList)
                     {
-                        var res = propertyCustomAttributeDictionary.TryGetValue(property, out var attr);
-                        if (res && attr != null)
+                        if (property.PropertyType.IsComplexType())
                         {
                             var complexPropertyList = property.PropertyType.ToPropInfoList();
 
@@ -690,10 +681,10 @@ namespace SqlBulkTools
         {
             foreach (var column in columns.ToList().OrderBy(x => x))
             foreach (var property in propertyInfoList)
-                if (property.PropertyType.GetCustomAttribute(typeof(ComplexTypeAttribute)) != null)
+                if (property.PropertyType.IsComplexType())
                 {
                     var complexPropertyList = property.PropertyType.ToPropInfoList();
-                        foreach (var complexProperty in complexPropertyList)
+                    foreach (var complexProperty in complexPropertyList)
                     {
                         var propertyName = $"{property.Name}_{complexProperty.Name}";
 
@@ -891,10 +882,9 @@ namespace SqlBulkTools
             {
                 //property.PropertyType.CustomAttributes.First(x => x.AttributeType.)
 
-                var complexTypeAttr = property.PropertyType.GetCustomAttribute(typeof(ComplexTypeAttribute));
                 var generatedTypeAttr = (DatabaseGeneratedAttribute)property.PropertyType.GetCustomAttribute(typeof(DatabaseGeneratedAttribute));
 
-                if (complexTypeAttr != null)
+                if (property.PropertyType.IsComplexType())
                 {
                     var complexTypeProperties = property.PropertyType.GetProperties();
 
@@ -1171,8 +1161,7 @@ namespace SqlBulkTools
 
             var leftName = ((MemberExpression) binaryBody.Left).Member.Name;
 
-            if (((MemberExpression) binaryBody.Left).Expression.Type.GetCustomAttribute(typeof(ComplexTypeAttribute)) !=
-                null
+            if (((MemberExpression) binaryBody.Left).Expression.Type.IsComplexType()
                 && ((MemberExpression) binaryBody.Left).Expression is MemberExpression)
                 leftName =
                     $"{((MemberExpression) ((MemberExpression) binaryBody.Left).Expression).Member.Name}_{leftName}";

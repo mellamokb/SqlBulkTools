@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Reflection;
 
 namespace SqlBulkTools.Core
 {
@@ -9,7 +12,6 @@ namespace SqlBulkTools.Core
     /// </summary>
     public static class BulkOperationsUtility
     {
-
         private static readonly Dictionary<Type, DbType> TypeMappings = new Dictionary<Type, DbType>()
         {
             { typeof(byte), DbType.Byte},
@@ -68,5 +70,24 @@ namespace SqlBulkTools.Core
 
             throw new KeyNotFoundException($"The type {type} could not be found.");
         }
+
+        private static readonly ConcurrentDictionary<Type, bool> _isComplexCache = new ConcurrentDictionary<Type, bool>();
+
+        internal static bool IsComplexType(this Type type) =>
+            _isComplexCache.GetOrAdd(type, t => t.GetCustomAttribute(typeof(ComplexTypeAttribute)) is object);
+
+        /// <summary>
+        /// Register a Type as a Complex Type for situations where you can't add a ComplexTypeAttribute to an existing type
+        /// </summary>
+        /// <typeparam name="T">The type to register as a Complex type</typeparam>
+        public static void RegisterComplexType<T>() =>
+            RegisterComplexType(typeof(T));
+
+        /// <summary>
+        /// Register a Type as a Complex Type for situations where you can't add a ComplexTypeAttribute to an existing type
+        /// </summary>
+        /// <param name="type">The type to register as a Complex type</param>
+        public static void RegisterComplexType(Type type) =>
+            _isComplexCache.AddOrUpdate(type, true, (t, c) => true);
     }
 }
