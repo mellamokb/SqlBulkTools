@@ -60,7 +60,8 @@ namespace SqlBulkTools
         }
 
         internal static string GetActualColumn(Dictionary<string, string> customColumnMappings, string propertyName) =>
-            customColumnMappings.TryGetValue(propertyName, out var actualPropertyName) ? actualPropertyName : propertyName;
+            customColumnMappings != null && customColumnMappings.TryGetValue(propertyName, out var actualPropertyName) 
+                ? actualPropertyName : propertyName;
 
         internal static string BuildCreateTempTable(HashSet<string> columns, DataTable schema,
             ColumnDirectionType outputIdentity)
