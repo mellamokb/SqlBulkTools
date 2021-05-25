@@ -34,8 +34,13 @@ namespace SqlBulkTools
         public string Name { get; }
         public Type PropertyType { get; }
 
+        public string GetName(string basePropertyName) => 
+            string.IsNullOrWhiteSpace(basePropertyName) ? Name : $"{basePropertyName}_{Name}";
+
         public object GetValue(object entity) =>
-            _propertyInfo != null
+            entity is null
+            ? null
+            : _propertyInfo != null
             ? _propertyInfo.GetValue(entity, null)
             : entity is IDictionary<string, object> dict
             ? dict[Name]
@@ -54,5 +59,7 @@ namespace SqlBulkTools
         }
 
         public bool CanWrite => _propertyInfo?.CanWrite ?? true;
+
+        public override string ToString() => $"{Name} <{PropertyType.Name}>";
     }
 }

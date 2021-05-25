@@ -13,6 +13,32 @@ namespace SqlBulkTools.UnitTests
 {
     public class BulkOperationsTests
     {
+        [Fact]
+        public void GetPropertyName_BaseProperty()
+        {
+            var expression = (Expression<Func<ComplexTypeModel, int>>)(model => model.Id);
+            var propertyName = BulkOperationsHelper.GetPropertyName(expression);
+
+            Assert.Equal("Id", propertyName);
+        }
+
+        [Fact]
+        public void GetPropertyName_ComplexProperty()
+        {
+            var expression = (Expression<Func<ComplexTypeModel, DateTime>>)(model => model.MinEstimate.CreationDate);
+            var propertyName = BulkOperationsHelper.GetPropertyName(expression);
+
+            Assert.Equal("MinEstimate_CreationDate", propertyName);
+        }
+
+        [Fact]
+        public void GetPropertyName_DeepComplexProperty()
+        {
+            var expression = (Expression<Func<ComplexTypeModel, string>>)(model => model.MinEstimate.Inception.DeepTest);
+            var propertyName = BulkOperationsHelper.GetPropertyName(expression);
+
+            Assert.Equal("MinEstimate_Inception_DeepTest", propertyName);
+        }
 
         [Fact]
         public void GetTableAndSchema_WhenNoSchemaIsSpecified()
@@ -227,11 +253,20 @@ namespace SqlBulkTools.UnitTests
         public void BulkOperationsHelper_GetAllPropertiesForComplexType_ReturnsCorrectSet()
         {
             // Arrange
-            var expected = new HashSet<string> { "AverageEstimate_TotalCost", "AverageEstimate_CreationDate", "Competition", "Id", "MinEstimate_TotalCost", "MinEstimate_CreationDate", "SearchVolume" };
+            var expected = new HashSet<string> { 
+                "AverageEstimate_CreationDate",
+                "AverageEstimate_Inception_DeepTest",
+                "AverageEstimate_TotalCost",
+                "Competition", 
+                "Id", 
+                "MinEstimate_CreationDate",
+                "MinEstimate_Inception_DeepTest",
+                "MinEstimate_TotalCost",
+                "SearchVolume" };
             var propertyInfoList = typeof(ComplexTypeModel).ToPropInfoList();
 
             // Act
-            var result = BulkOperationsHelper.GetAllValueTypeAndStringColumns(propertyInfoList, typeof(ComplexTypeModel));
+            var result = BulkOperationsHelper.GetAllValueTypeAndStringColumns(propertyInfoList);
 
             // Assert
             Assert.Equal(expected.ToList(), result.ToList());
@@ -240,15 +275,25 @@ namespace SqlBulkTools.UnitTests
         [Fact]
         public void BulkOperationsHelper_CreateDataTableForComplexType_IsStructuredCorrectly()
         {
-            var columns = new HashSet<string> { "AverageEstimate_TotalCost", "AverageEstimate_CreationDate", "Competition", "MinEstimate_TotalCost", "MinEstimate_CreationDate", "SearchVolume" };
+            var columns = new HashSet<string> { 
+                "AverageEstimate_CreationDate",
+                "AverageEstimate_Inception_DeepTest", 
+                "AverageEstimate_TotalCost",
+                "Competition", 
+                "MinEstimate_CreationDate",
+                "MinEstimate_Inception_DeepTest",
+                "MinEstimate_TotalCost", 
+                "SearchVolume" };
             var propertyInfoList = typeof(ComplexTypeModel).ToPropInfoList();
 
             var result = BulkOperationsHelper.CreateDataTable<ComplexTypeModel>(propertyInfoList, columns, null, new Dictionary<string, int>());
 
             Assert.Equal(result.Columns["AverageEstimate_TotalCost"].DataType, typeof(double));
             Assert.Equal(result.Columns["AverageEstimate_CreationDate"].DataType, typeof(DateTime));
+            Assert.Equal(result.Columns["AverageEstimate_Inception_DeepTest"].DataType, typeof(string));
             Assert.Equal(result.Columns["MinEstimate_TotalCost"].DataType, typeof(double));
             Assert.Equal(result.Columns["MinEstimate_CreationDate"].DataType, typeof(DateTime));
+            Assert.Equal(result.Columns["MinEstimate_Inception_DeepTest"].DataType, typeof(string));
             Assert.Equal(result.Columns["SearchVolume"].DataType, typeof(double));
             Assert.Equal(result.Columns["Competition"].DataType, typeof(double));
         }
@@ -261,7 +306,7 @@ namespace SqlBulkTools.UnitTests
             var propertyInfoList = typeof(ModelWithMixedTypes).ToPropInfoList();
 
             // Act
-            var result = BulkOperationsHelper.GetAllValueTypeAndStringColumns(propertyInfoList, typeof(ModelWithMixedTypes));
+            var result = BulkOperationsHelper.GetAllValueTypeAndStringColumns(propertyInfoList);
 
             // Assert
             Assert.Equal(expected.ToList(), result.ToList());

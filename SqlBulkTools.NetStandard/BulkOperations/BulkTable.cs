@@ -121,7 +121,7 @@ namespace SqlBulkTools.BulkCopy
         /// <returns></returns>
         public BulkAddColumnList<T> AddAllColumns()
         {
-            Columns = BulkOperationsHelper.GetAllValueTypeAndStringColumns(_propertyInfoList, typeof(T));
+            Columns = BulkOperationsHelper.GetAllValueTypeAndStringColumns(_propertyInfoList);
             return new BulkAddColumnList<T>(bulk, _list, _tableName, Columns, CustomColumnMappings, _schema, _bulkCopySettings, _propertyInfoList);
         }
 

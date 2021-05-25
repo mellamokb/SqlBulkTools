@@ -14,41 +14,41 @@ namespace SqlBulkTools.Core
     {
         private static readonly Dictionary<Type, DbType> TypeMappings = new Dictionary<Type, DbType>()
         {
-            { typeof(byte), DbType.Byte},
-            { typeof(sbyte), DbType.Int16},
-            { typeof(ushort), DbType.UInt16},
-            { typeof(int), DbType.Int32},
-            { typeof(uint), DbType.UInt32},
-            { typeof(long), DbType.Int64},
+            { typeof(byte), DbType.Byte },
+            { typeof(sbyte), DbType.Int16 },
+            { typeof(ushort), DbType.UInt16 },
+            { typeof(int), DbType.Int32 },
+            { typeof(uint), DbType.UInt32 },
+            { typeof(long), DbType.Int64 },
             { typeof(ulong), DbType.UInt64 },
             { typeof(float), DbType.Single },
-            { typeof(double), DbType.Double},
-            { typeof(decimal), DbType.Decimal},
-            { typeof(bool), DbType.Boolean},
+            { typeof(double), DbType.Double },
+            { typeof(decimal), DbType.Decimal },
+            { typeof(bool), DbType.Boolean },
             { typeof(string), DbType.String },
-            { typeof(char), DbType.StringFixedLength},
-            { typeof(char[]), DbType.String},
-            { typeof(Guid), DbType.Guid},
-            { typeof(DateTime), DbType.DateTime},
+            { typeof(char), DbType.StringFixedLength },
+            { typeof(char[]), DbType.String },
+            { typeof(Guid), DbType.Guid },
+            { typeof(DateTime), DbType.DateTime },
             { typeof(DateTimeOffset), DbType.DateTimeOffset },
-            { typeof(byte[]), DbType.Binary},
-            { typeof(byte?), DbType.Byte},
+            { typeof(byte[]), DbType.Binary },
+            { typeof(byte?), DbType.Byte },
             { typeof(sbyte?), DbType.SByte },
-            { typeof(short), DbType.Int16},
-            { typeof(short?), DbType.Int16},
-            { typeof(ushort?), DbType.UInt16},
-            { typeof(int?), DbType.Int32},
-            { typeof(uint?), DbType.UInt32},
-            { typeof(long?), DbType.Int64},
-            { typeof(ulong?), DbType.UInt64},
-            { typeof(float?), DbType.Single},
-            { typeof(double?), DbType.Double},
-            { typeof(decimal?), DbType.Decimal},
-            { typeof(bool?), DbType.Boolean},
-            { typeof(char?), DbType.StringFixedLength},
+            { typeof(short), DbType.Int16 },
+            { typeof(short?), DbType.Int16 },
+            { typeof(ushort?), DbType.UInt16 },
+            { typeof(int?), DbType.Int32 },
+            { typeof(uint?), DbType.UInt32 },
+            { typeof(long?), DbType.Int64 },
+            { typeof(ulong?), DbType.UInt64 },
+            { typeof(float?), DbType.Single },
+            { typeof(double?), DbType.Double },
+            { typeof(decimal?), DbType.Decimal },
+            { typeof(bool?), DbType.Boolean },
+            { typeof(char?), DbType.StringFixedLength },
             { typeof(Guid?), DbType.Guid},
             { typeof(DateTime?), DbType.DateTime },
-            { typeof(DateTimeOffset?), DbType.DateTimeOffset},
+            { typeof(DateTimeOffset?), DbType.DateTimeOffset },
             { typeof(TimeSpan), DbType.Time },
             { typeof(TimeSpan?), DbType.Time },
         };
@@ -59,17 +59,10 @@ namespace SqlBulkTools.Core
         /// <param name="type"></param>
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        public static DbType GetSqlTypeFromDotNetType(Type type)
-        {
-            DbType dbType;
-
-            if (TypeMappings.TryGetValue(type, out dbType))
-            {
-                return dbType;
-            }
-
-            throw new KeyNotFoundException($"The type {type} could not be found.");
-        }
+        public static DbType GetSqlTypeFromDotNetType(Type type) =>
+            TypeMappings.TryGetValue(type, out var dbType)
+                ? dbType
+                : throw new KeyNotFoundException($"The type {type} could not be found.");
 
         private static readonly ConcurrentDictionary<Type, bool> _isComplexCache = new ConcurrentDictionary<Type, bool>();
 

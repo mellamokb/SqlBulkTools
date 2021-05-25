@@ -276,8 +276,10 @@ CREATE TABLE [dbo].[ComplexTypeTest](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[MinEstimate_TotalCost] float NOT NULL,
 	[MinEstimate_CreationDate] DateTime NOT NULL,
+	[MinEstimate_Inception_DeepTest] [nvarchar](max) NULL,
 	[AverageEstimate_TotalCost] float NOT NULL,
 	[AverageEstimate_CreationDate] DateTime NOT NULL,
+	[AverageEstimate_Inception_DeepTest] [nvarchar](max) NULL,
 	[SearchVolume] float NOT NULL,
 	[Competition] float NOT NULL,
  CONSTRAINT [PK_dbo.ComplexTypeTest] PRIMARY KEY CLUSTERED 

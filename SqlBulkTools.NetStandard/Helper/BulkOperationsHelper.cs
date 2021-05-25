@@ -21,7 +21,7 @@ using SqlBulkTools.Enumeration;
 // ReSharper disable once CheckNamespace
 namespace SqlBulkTools
 {
-    public static class BulkOperationsHelper
+    internal static class BulkOperationsHelper
     {
         internal static Table GetTableAndSchema(string tableName)
         {
@@ -33,10 +33,14 @@ namespace SqlBulkTools
             var periodCount = sb.ToString().ToCharArray().Count(x => x == '.');
 
             if (periodCount == 0)
-                return new Table {Name = tableName, Schema = Constants.DefaultSchemaName};
+            {
+                return new Table { Name = tableName, Schema = Constants.DefaultSchemaName };
+            }
 
             if (periodCount > 1)
+            {
                 throw new SqlBulkToolsException("Table name can't contain more than one period '.' character.");
+            }
 
             var tableMatch = Regex.Match(sb.ToString(), @"(?<=\.).*");
 
@@ -46,22 +50,17 @@ namespace SqlBulkTools
             var schemaMatch = Regex.Match(sb.ToString(), @"^([^.]*)");
             var schema = schemaMatch.Success ? schemaMatch.Value : sb.ToString();
 
-            var table = new Table();
-            table.Name = tableName;
-            table.Schema = schema;
+            var table = new Table
+            {
+                Name = tableName,
+                Schema = schema
+            };
 
             return table;
         }
 
-        internal static string GetActualColumn(Dictionary<string, string> customColumnMappings, string propertyName)
-        {
-            string actualPropertyName;
-
-            if (customColumnMappings.TryGetValue(propertyName, out actualPropertyName))
-                return actualPropertyName;
-
-            return propertyName;
-        }
+        internal static string GetActualColumn(Dictionary<string, string> customColumnMappings, string propertyName) =>
+            customColumnMappings.TryGetValue(propertyName, out var actualPropertyName) ? actualPropertyName : propertyName;
 
         internal static string BuildCreateTempTable(HashSet<string> columns, DataTable schema,
             ColumnDirectionType outputIdentity)
@@ -81,12 +80,16 @@ namespace SqlBulkTools
                 if (columnType == "varchar" || columnType == "nvarchar" ||
                     columnType == "char" || columnType == "binary" ||
                     columnType == "varbinary" || columnType == "nchar")
+                {
                     actualColumnsMaxCharLength.Add(row["COLUMN_NAME"].ToString(),
                         row["CHARACTER_MAXIMUM_LENGTH"].ToString());
+                }
 
                 if (columnType == "datetime2" || columnType == "time")
+                {
                     actualColumnsDateTimePrecision.Add(row["COLUMN_NAME"].ToString(),
                         row["DATETIME_PRECISION"].ToString());
+                }
 
                 if (columnType == "numeric" || columnType == "decimal")
                 {
@@ -101,16 +104,18 @@ namespace SqlBulkTools
 
             var command = new StringBuilder();
 
-            command.Append($"CREATE TABLE {Constants.TempTableName}(");
+            _ = command.Append($"CREATE TABLE {Constants.TempTableName}(");
 
             var paramList = new List<string>();
 
             foreach (var column in columns.ToList().OrderBy(x => x))
             {
                 if (column == Constants.InternalId)
+                {
                     continue;
-                string columnType;
-                if (actualColumns.TryGetValue(column, out columnType))
+                }
+
+                if (actualColumns.TryGetValue(column, out var columnType))
                 {
                     columnType = GetVariableCharType(column, columnType, actualColumnsMaxCharLength);
                     columnType = GetDecimalPrecisionAndScaleType(column, columnType, actualColumnsNumericPrecision);
@@ -122,10 +127,14 @@ namespace SqlBulkTools
 
             var paramListConcatenated = string.Join(", ", paramList);
 
-            command.Append(paramListConcatenated);
+            _ = command.Append(paramListConcatenated);
 
-            if (outputIdentity == ColumnDirectionType.InputOutput) command.Append($", [{Constants.InternalId}] int");
-            command.Append(");");
+            if (outputIdentity == ColumnDirectionType.InputOutput)
+            {
+                _ = command.Append($", [{Constants.InternalId}] int");
+            }
+
+            _ = command.Append(");");
 
             return command.ToString();
         }
@@ -152,12 +161,12 @@ namespace SqlBulkTools
                 columnType == "char" || columnType == "binary" ||
                 columnType == "varbinary" || columnType == "nchar")
             {
-                string maxCharLength;
-                if (actualColumnsMaxCharLength.TryGetValue(column, out maxCharLength))
+                if (actualColumnsMaxCharLength.TryGetValue(column, out var maxCharLength))
                 {
                     if (maxCharLength == "-1")
+                    {
                         maxCharLength = "max";
-
+                    }
                     columnType = columnType + "(" + maxCharLength + ")";
                 }
             }
@@ -170,10 +179,10 @@ namespace SqlBulkTools
         {
             if (columnType == "decimal" || columnType == "numeric")
             {
-                PrecisionType p;
-
-                if (actualColumnsPrecision.TryGetValue(column, out p))
+                if (actualColumnsPrecision.TryGetValue(column, out var p))
+                {
                     columnType = columnType + "(" + p.NumericPrecision + ", " + p.NumericScale + ")";
+                }
             }
 
             return columnType;
@@ -184,9 +193,10 @@ namespace SqlBulkTools
         {
             if (columnType == "datetime2" || columnType == "time")
             {
-                string dateTimePrecision;
-                if (actualColumnsDateTimePrecision.TryGetValue(column, out dateTimePrecision))
+                if (actualColumnsDateTimePrecision.TryGetValue(column, out var dateTimePrecision))
+                {
                     columnType = columnType + "(" + dateTimePrecision + ")";
+                }
             }
 
             return columnType;
@@ -197,38 +207,31 @@ namespace SqlBulkTools
         {
             var command = new StringBuilder();
 
-            command.Append(
+            _ = command.Append(
                 $"ON ([{targetAlias}].[{updateOn[0]}] = [{sourceAlias}].[{updateOn[0]}]{GetCollation(collationDic, updateOn[0])}{BuildNullCondition(updateOn[0], sourceAlias, targetAlias, nullableColumnDic)}) ");
 
             if (updateOn.Length > 1)
+            {
                 for (var i = 1; i < updateOn.Length; i++)
-                    command.Append(
+                {
+                    _ = command.Append(
                         $"AND ([{targetAlias}].[{updateOn[i]}] = [{sourceAlias}].[{updateOn[i]}]{GetCollation(collationDic, updateOn[i])}{BuildNullCondition(updateOn[i], sourceAlias, targetAlias, nullableColumnDic)}) ");
+                }
+            }
 
             return command.ToString();
         }
 
         internal static string BuildNullCondition(string updateOn, string sourceAlias, string targetAlias,
-            Dictionary<string, bool> nullableColumnDic)
-        {
-            bool isColumnNullable;
+            Dictionary<string, bool> nullableColumnDic) =>
+            nullableColumnDic.TryGetValue(updateOn, out var isColumnNullable) && isColumnNullable
+                ? $" OR ([{targetAlias}].[{updateOn}] IS NULL AND [{sourceAlias}].[{updateOn}] IS NULL)"
+                : string.Empty;
 
-            if (nullableColumnDic.TryGetValue(updateOn, out isColumnNullable) && isColumnNullable)
-                return $" OR ([{targetAlias}].[{updateOn}] IS NULL AND [{sourceAlias}].[{updateOn}] IS NULL)";
-
-            return string.Empty;
-        }
-
-        internal static string GetCollation(Dictionary<string, string> collationDic, string column)
-        {
-            if (collationDic == null)
-                return string.Empty;
-
-            string collateColumn = null;
-            if (collationDic.TryGetValue(column, out collateColumn)) return $" COLLATE {collateColumn}";
-
-            return string.Empty;
-        }
+        internal static string GetCollation(Dictionary<string, string> collationDic, string column) =>
+            collationDic != null && collationDic.TryGetValue(column, out var collateColumn) 
+                ? $" COLLATE {collateColumn}" 
+                : string.Empty;
 
         internal static string BuildMatchTargetOnList(HashSet<string> matchTargetOnColumns,
             Dictionary<string, string> collationDic, Dictionary<string, string> customColumnMappings)
@@ -237,19 +240,22 @@ namespace SqlBulkTools
 
             var whereClauseColumn = GetActualColumn(customColumnMappings, matchTargetOnColumns.ElementAt(0));
 
-            sb.Append(
+            _ = sb.Append(
                 $"WHERE [{whereClauseColumn}] = @{whereClauseColumn}{GetCollation(collationDic, whereClauseColumn)}");
 
             if (matchTargetOnColumns.Count() > 1)
+            {
                 foreach (var column in matchTargetOnColumns)
                 {
                     if (column.Equals(matchTargetOnColumns.ElementAt(0)))
+                    {
                         continue;
-
+                    }
                     var andClauseColumn = GetActualColumn(customColumnMappings, column);
-                    sb.Append(
+                    _ = sb.Append(
                         $" AND [{andClauseColumn}] = @{andClauseColumn}{GetCollation(collationDic, andClauseColumn)}");
                 }
+            }
 
             return sb.ToString();
         }
@@ -258,10 +264,14 @@ namespace SqlBulkTools
             string targetAlias, Dictionary<string, string> collationDic)
         {
             if (conditions == null)
+            {
                 return null;
+            }
 
             if (updateOn == null || updateOn.Length == 0)
+            {
                 throw new SqlBulkToolsException("MatchTargetOn is required for AndQuery.");
+            }
 
             var command = new StringBuilder();
 
@@ -269,7 +279,7 @@ namespace SqlBulkTools
             {
                 var targetColumn = condition.CustomColumnMapping ?? condition.LeftName;
 
-                command.Append(
+                _ = command.Append(
                     $"AND [{targetAlias}].[{targetColumn}] {GetOperator(condition)} {(condition.Value != "NULL" ? "@" + condition.LeftName + Constants.UniqueParamIdentifier + condition.SortOrder + GetCollation(collationDic, condition.LeftName) : "NULL")} ");
             }
 
@@ -281,8 +291,9 @@ namespace SqlBulkTools
             Dictionary<string, string> collationDic, Dictionary<string, string> customColumnMappings)
         {
             if (conditions == null)
+            {
                 return null;
-
+            }
 
             conditions = conditions.OrderBy(x => x.SortOrder);
 
@@ -293,35 +304,34 @@ namespace SqlBulkTools
                 var targetColumn = condition.CustomColumnMapping ?? condition.LeftName;
 
                 if (customColumnMappings != null)
+                {
                     targetColumn = GetActualColumn(customColumnMappings, targetColumn);
+                }
 
                 switch (condition.PredicateType)
                 {
                     case PredicateType.Where:
                     {
-                        command.Append(" WHERE ");
+                        _ = command.Append(" WHERE ");
                         break;
                     }
-
                     case PredicateType.And:
                     {
-                        command.Append(" AND ");
+                        _ = command.Append(" AND ");
                         break;
                     }
-
                     case PredicateType.Or:
                     {
-                        command.Append(" OR ");
+                        _ = command.Append(" OR ");
                         break;
                     }
-
                     default:
                     {
                         throw new KeyNotFoundException("Predicate not found");
                     }
                 }
 
-                command.Append(
+                _ = command.Append(
                     $"[{targetColumn}] {GetOperator(condition)} {(condition.Value != "NULL" ? "@" + condition.LeftName + Constants.UniqueParamIdentifier + condition.SortOrder + GetCollation(collationDic, condition.LeftName) : "NULL")}");
             }
 
@@ -339,7 +349,6 @@ namespace SqlBulkTools
                         condition.Value = condition.Value?.ToUpper();
                         return "IS NOT";
                     }
-
                     return "!=";
                 }
                 case ExpressionType.Equal:
@@ -349,7 +358,6 @@ namespace SqlBulkTools
                         condition.Value = condition.Value?.ToUpper();
                         return "IS";
                     }
-
                     return "=";
                 }
                 case ExpressionType.LessThan:
@@ -380,16 +388,24 @@ namespace SqlBulkTools
             var paramsSeparated = new List<string>();
 
             if (excludeFromUpdate == null)
+            {
                 excludeFromUpdate = new HashSet<string>();
+            }
 
-            command.Append("SET ");
+            _ = command.Append("SET ");
 
             foreach (var column in columns.ToList().OrderBy(x => x))
+            {
                 if ((column != identityColumn || identityColumn == null) && !excludeFromUpdate.Contains(column))
+                {
                     if (column != Constants.InternalId)
+                    {
                         paramsSeparated.Add($"[{targetAlias}].[{column}] = [{sourceAlias}].[{column}]");
+                    }
+                }
+            }
 
-            command.Append(string.Join(", ", paramsSeparated) + " ");
+            _ = command.Append(string.Join(", ", paramsSeparated) + " ");
 
             return command.ToString();
         }
@@ -401,22 +417,29 @@ namespace SqlBulkTools
         /// <param name="excludeFromUpdate"></param>
         /// <param name="identityColumn"></param>
         /// <returns></returns>
-        public static string BuildUpdateSet(HashSet<string> columns, HashSet<string> excludeFromUpdate,
+        internal static string BuildUpdateSet(HashSet<string> columns, HashSet<string> excludeFromUpdate,
             string identityColumn)
         {
             var command = new StringBuilder();
             var paramsSeparated = new List<string>();
 
             // To prevent null reference exception
-            if (excludeFromUpdate == null) excludeFromUpdate = new HashSet<string>();
+            if (excludeFromUpdate == null)
+            {
+                excludeFromUpdate = new HashSet<string>();
+            }
 
-            command.Append("SET ");
+            _ = command.Append("SET ");
 
             foreach (var column in columns.ToList().OrderBy(x => x))
+            {
                 if (column != identityColumn && !excludeFromUpdate.Contains(column))
+                {
                     paramsSeparated.Add($"[{column}] = @{column}");
+                }
+            }
 
-            command.Append(string.Join(", ", paramsSeparated));
+            _ = command.Append(string.Join(", ", paramsSeparated));
 
             return command.ToString();
         }
@@ -427,16 +450,18 @@ namespace SqlBulkTools
             var insertColumns = new List<string>();
             var values = new List<string>();
 
-            command.Append("INSERT (");
+            _ = command.Append("INSERT (");
 
             foreach (var column in columns.ToList().OrderBy(x => x))
+            {
                 if (column != Constants.InternalId && column != identityColumn)
                 {
                     insertColumns.Add($"[{column}]");
                     values.Add($"[{sourceAlias}].[{column}]");
                 }
+            }
 
-            command.Append($"{string.Join(", ", insertColumns)}) values ({string.Join(", ", values)})");
+            _ = command.Append($"{string.Join(", ", insertColumns)}) values ({string.Join(", ", values)})");
 
             return command.ToString();
         }
@@ -447,13 +472,17 @@ namespace SqlBulkTools
             var command = new StringBuilder();
             var insertColumns = new List<string>();
 
-            command.Append($"INSERT INTO {fullQualifiedTableName} (");
+            _ = command.Append($"INSERT INTO {fullQualifiedTableName} (");
 
             foreach (var column in columns.OrderBy(x => x))
+            {
                 if (column != Constants.InternalId && column != identityColumn)
+                {
                     insertColumns.Add("[" + column + "]");
+                }
+            }
 
-            command.Append($"{string.Join(", ", insertColumns)}) ");
+            _ = command.Append($"{string.Join(", ", insertColumns)}) ");
 
             return command.ToString();
         }
@@ -463,12 +492,17 @@ namespace SqlBulkTools
             var command = new StringBuilder();
             var valueList = new List<string>();
 
-            command.Append("(");
+            _ = command.Append("(");
             foreach (var column in columns.OrderBy(x => x))
+            {
                 if (column != identityColumn)
+                {
                     valueList.Add($"@{column}");
-            command.Append(string.Join(", ", valueList));
-            command.Append(")");
+                }
+            }
+
+            _ = command.Append(string.Join(", ", valueList));
+            _ = command.Append(")");
 
             return command.ToString();
         }
@@ -478,22 +512,30 @@ namespace SqlBulkTools
             var command = new StringBuilder();
             var selectColumns = new List<string>();
 
-            command.Append("SELECT ");
+            _ = command.Append("SELECT ");
 
             foreach (var column in columns.ToList().OrderBy(x => x))
-                if (identityColumn != null && column != identityColumn || identityColumn == null)
+            {
+                if ((identityColumn != null && column != identityColumn) || identityColumn == null)
+                {
                     if (column != Constants.InternalId)
+                    {
                         selectColumns.Add($"[{sourceAlias}].[{column}]");
+                    }
+                }
+            }
 
-            command.Append(string.Join(", ", selectColumns));
+            _ = command.Append(string.Join(", ", selectColumns));
 
             return command.ToString();
         }
 
-        internal static string GetPropertyName(Expression method)
+        internal static string GetPropertyName(Expression expression)
         {
-            if (!(method is LambdaExpression lambda))
-                throw new ArgumentNullException(nameof(method));
+            if (!(expression is LambdaExpression lambda))
+            {
+                throw new ArgumentException("Must be a LambdaExpression.", nameof(expression));
+            }
 
             MemberExpression memberExpr = null;
 
@@ -501,21 +543,28 @@ namespace SqlBulkTools
             {
                 case ExpressionType.Convert:
                     memberExpr =
-                        ((UnaryExpression) lambda.Body).Operand as MemberExpression;
-
-                    if (memberExpr is object && memberExpr.Expression.Type.IsComplexType()
-                        && memberExpr.Expression is MemberExpression expression)
-                        return $"{expression.Member.Name}_{memberExpr.Member.Name}";
+                        ((UnaryExpression)lambda.Body).Operand as MemberExpression;
                     break;
                 case ExpressionType.MemberAccess:
                     memberExpr = lambda.Body as MemberExpression;
                     break;
             }
 
-            if (memberExpr == null)
-                throw new ArgumentException("method");
+            if (memberExpr is null)
+            {
+                throw new ArgumentException("Expression not supported.", nameof(expression));
+            }
 
-            return memberExpr.Member.Name;
+            var propertyName = memberExpr.Member.Name;
+
+            while (memberExpr is object && memberExpr.Expression.Type.IsComplexType()
+                && memberExpr.Expression is MemberExpression complexExpr)
+            {
+                propertyName = $"{complexExpr.Member.Name}_{propertyName}";
+                memberExpr = complexExpr;
+            }
+
+            return propertyName;
         }
 
         internal static DataTable CreateDataTable<T>(List<PropInfo> propertyInfoList, HashSet<string> columns,
@@ -523,217 +572,170 @@ namespace SqlBulkTools
             List<string> matchOnColumns = null, ColumnDirectionType? outputIdentity = null)
         {
             if (columns == null)
+            {
                 return null;
+            }
 
             var outputIdentityCol = outputIdentity.HasValue &&
                                     outputIdentity.Value == ColumnDirectionType.InputOutput;
 
             var dataTable = new DataTable(typeof(T).Name);
 
-            if (matchOnColumns != null) columns = CheckForAdditionalColumns(columns, matchOnColumns);
+            if (matchOnColumns != null)
+            {
+                columns = CheckForAdditionalColumns(columns, matchOnColumns);
+            }
 
-            if (outputIdentityCol) columns.Add(Constants.InternalId);
+            if (outputIdentityCol)
+            {
+                _ = columns.Add(Constants.InternalId);
+            }
 
             foreach (var property in propertyInfoList)
             {
-                if (property.PropertyType.IsComplexType())
-                {
-                    var complexPropertyInfoList = property.PropertyType.ToPropInfoList();
-
-                    foreach (var complexProperty in complexPropertyInfoList)
-                        AddPropertyToDataTable(complexProperty, columnMappings, dataTable, ordinalDic, columns, true,
-                            property.Name);
-                }
-                else
-                {
-                    AddPropertyToDataTable(property, columnMappings, dataTable, ordinalDic, columns, false, null);
-                }
-
-                //var type = Nullable.GetUnderlyingType(property.PropertyType) ??
-                //                    property.PropertyType;
-
-                //if (columnMappings != null && columnMappings.ContainsKey(property.Name))
-                //{
-                //    dataTable.Columns.Add(columnMappings[property.Name], type);
-                //    var ordinal = dataTable.Columns[columnMappings[property.Name]].Ordinal;
-
-                //    ordinalDic.Add(property.Name, ordinal);
-                //}
-
-                //else if (columns.Contains(property.Name))
-                //{
-                //    dataTable.Columns.Add(property.Name, type);
-                //    var ordinal = dataTable.Columns[property.Name].Ordinal;
-
-                //    ordinalDic.Add(property.Name, ordinal);
-                //}          
+                AddProperty(dataTable, property, columns, columnMappings, ordinalDic);
             }
 
-            if (!outputIdentityCol)
-                return dataTable;
-            
-            dataTable.Columns.Add(Constants.InternalId, typeof(int));
-            var ordinal = dataTable.Columns[Constants.InternalId].Ordinal;
-
-            ordinalDic.Add(Constants.InternalId, ordinal);
+            if (outputIdentityCol)
+            {
+                var ordinal = dataTable.Columns.Add(Constants.InternalId, typeof(int)).Ordinal;
+                ordinalDic.Add(Constants.InternalId, ordinal);
+            }
 
             return dataTable;
         }
 
-        internal static void AddPropertyToDataTable(PropInfo property, Dictionary<string, string> columnMappings,
-            DataTable dataTable, Dictionary<string, int> ordinalDic, HashSet<string> columns, bool isComplex,
-            string basePropertyName)
+        private static void AddProperty(this DataTable dataTable, PropInfo property, 
+            HashSet<string> columns, Dictionary<string, string> columnMappings, 
+            Dictionary<string, int> ordinalDic, string basePropertyName = null)
         {
-            var propertyName = isComplex ? $"{basePropertyName}_{property.Name}" : property.Name;
-
-            var type = Nullable.GetUnderlyingType(property.PropertyType) ??
-                       property.PropertyType;
-
-            if (columnMappings != null && columnMappings.ContainsKey(propertyName))
+            if (property.PropertyType.IsComplexType())
             {
-                dataTable.Columns.Add(columnMappings[propertyName], type);
-                var ordinal = dataTable.Columns[columnMappings[propertyName]].Ordinal;
+                basePropertyName = property.GetName(basePropertyName);
 
-                ordinalDic.Add(propertyName, ordinal);
+                foreach (var complexProperty in property.PropertyType.ToPropInfoList())
+                {
+                    AddProperty(dataTable, complexProperty, columns, columnMappings, ordinalDic, basePropertyName);
+                }
             }
-
-            else if (columns.Contains(propertyName))
+            else
             {
-                dataTable.Columns.Add(propertyName, type);
-                var ordinal = dataTable.Columns[propertyName].Ordinal;
+                var propertyName = property.GetName(basePropertyName);
 
-                ordinalDic.Add(propertyName, ordinal);
+                var type = Nullable.GetUnderlyingType(property.PropertyType) ??
+                           property.PropertyType;
+
+                if (columnMappings != null && columnMappings.ContainsKey(propertyName))
+                {
+                    var ordinal = dataTable.Columns.Add(columnMappings[propertyName], type).Ordinal;
+                    ordinalDic.Add(propertyName, ordinal);
+                }
+                else if (columns.Contains(propertyName))
+                {
+                    var ordinal = dataTable.Columns.Add(propertyName, type).Ordinal;
+                    ordinalDic.Add(propertyName, ordinal);
+                }
             }
         }
 
-        public static DataTable ConvertListToDataTable<T>(List<PropInfo> propertyInfoList, DataTable dataTable,
+        internal static DataTable ConvertListToDataTable<T>(List<PropInfo> propertyInfoList, DataTable dataTable,
             IEnumerable<T> list, HashSet<string> columns, Dictionary<string, int> ordinalDic,
             Dictionary<int, T> outputIdentityDic = null)
         {
             var internalIdCounter = 0;
 
-            foreach (var item in list)
+            foreach (var entity in list)
             {
                 var values = new object[columns.Count];
                 foreach (var column in columns.ToList())
                 {
-                    foreach (var property in propertyInfoList)
+                    if (ordinalDic.TryGetValue(column, out var ordinal))
                     {
-                        if (property.PropertyType.IsComplexType())
+                        if (column == Constants.InternalId)
                         {
-                            var complexPropertyList = property.PropertyType.ToPropInfoList();
-
-                            foreach (var complexProperty in complexPropertyList)
-                                AddToDataTable(complexProperty, column, item, ordinalDic, values, property.Name, true);
+                            values[ordinal] = internalIdCounter;
+                            outputIdentityDic?.Add(internalIdCounter, entity);
                         }
                         else
                         {
-                            AddToDataTable(property, column, item, ordinalDic, values, null, false);
+                            values[ordinal] = entity.GetPropertyValue(column, propertyInfoList);
                         }
                     }
-
-                    if (column != Constants.InternalId) 
-                        continue;
-                    
-                    if (ordinalDic.TryGetValue(Constants.InternalId, out var ordinal) == false) 
-                        continue;
-                        
-                    values[ordinal] = internalIdCounter;
-                    outputIdentityDic?.Add(internalIdCounter, item);
                 }
 
                 internalIdCounter++;
-                dataTable.Rows.Add(values);
+                _ = dataTable.Rows.Add(values);
             }
 
             return dataTable;
         }
 
-        internal static void AddToDataTable<T>(PropInfo property, string column, T item,
-            Dictionary<string, int> ordinalDic,
-            object[] values, string basePropertyName, bool isComplex)
+        private static object GetPropertyValue<T>(this T entity, string columnName, List<PropInfo> propertyInfoList) =>
+            TryGetPropertyValueAndType(entity, columnName, propertyInfoList, out var value, out var _) ? value : null;
+
+        private static (object, Type) GetPropertyValueAndType<T>(this T entity, string columnName, List<PropInfo> propertyInfoList) =>
+            TryGetPropertyValueAndType(entity, columnName, propertyInfoList, out var value, out var type) ? (value, type) : (null, null);
+
+        private static bool TryGetPropertyValueAndType<T>(this T entity, string columnName, List<PropInfo> propertyInfoList, out object value, out Type type, string basePropertyName = null)
         {
-            var propertyName = isComplex ? $"{basePropertyName}_{property.Name}" : property.Name;
-            if (propertyName == column && item != null &&
-                CheckForValidDataType(property.PropertyType, true))
+            // First check if we find the asked columnName here
+            if (propertyInfoList.SingleOrDefault(p => p.GetName(basePropertyName) == columnName) is PropInfo foundProperty)
             {
-                if (ordinalDic.TryGetValue(propertyName, out var ordinal) == false)
-                    return;
-                
-                if (isComplex)
+                // CheckForValidDataType will throw if not valid, so not interested in the return value.
+                _ = CheckForValidDataType(foundProperty.PropertyType, true);
+                value = foundProperty.GetValue(entity);
+                type = foundProperty.PropertyType;
+                return true;
+            }
+            // If we get here, this means the property is not found as a base property,
+            // so this must be a property on a complex type property, let's search for it (recursive)
+            foreach (var property in propertyInfoList.Where(p => p.PropertyType.IsComplexType()))
+            {
+                var complexEntity = property.GetValue(entity);
+                var complexBasePropertyName = property.GetName(basePropertyName);
+                var complexPropertyInfoList = property.PropertyType.ToPropInfoList();
+                foreach (var complexProperty in complexPropertyInfoList)
                 {
-                    var complexType = item.GetType().GetProperty(basePropertyName);
-                    var value = complexType.GetValue(item, null);
-                    values[ordinal] = property.GetValue(value);
+                    if (TryGetPropertyValueAndType(complexEntity, columnName, complexPropertyInfoList, out value, out type, complexBasePropertyName))
+                    {
+                        return true;
+                    }
                 }
-                else
+            }
+            value = null;
+            type = null;
+            return false;
+        }
+
+        // Loops through object properties, checks if column has been added, adds as sql parameter. 
+        internal static void AddSqlParamsForQuery<T>(List<PropInfo> propertyInfoList,
+            List<SqlParameter> sqlParameters, HashSet<string> columns, T entity,
+            string identityColumn = null, ColumnDirectionType direction = ColumnDirectionType.Input,
+            Dictionary<string, string> customColumnMappings = null)
+        {
+            foreach (var column in columns.ToList().OrderBy(x => x))
+            {
+                var (propValue, propType) = entity.GetPropertyValueAndType(column, propertyInfoList);
+
+                var sqlParam = sqlParameters.AddSqlParameter(GetActualColumn(customColumnMappings, column), propValue, propType);
+
+                if (column == identityColumn && direction == ColumnDirectionType.InputOutput)
                 {
-                    values[ordinal] = property.GetValue(item);
+                    sqlParam.Direction = ParameterDirection.InputOutput;
                 }
             }
         }
 
-        // Loops through object properties, checks if column has been added, adds as sql parameter. 
-        public static void AddSqlParamsForQuery<T>(List<PropInfo> propertyInfoList,
-            List<SqlParameter> sqlParameters, HashSet<string> columns, T item,
-            string identityColumn = null, ColumnDirectionType direction = ColumnDirectionType.Input,
-            Dictionary<string, string> customColumns = null)
+        private static SqlParameter AddSqlParameter(this List<SqlParameter> sqlParameters, string parameterName, object value, Type valueType)
         {
-            foreach (var column in columns.ToList().OrderBy(x => x))
-            foreach (var property in propertyInfoList)
-                if (property.PropertyType.IsComplexType())
-                {
-                    var complexPropertyList = property.PropertyType.ToPropInfoList();
-                    foreach (var complexProperty in complexPropertyList)
-                    {
-                        var propertyName = $"{property.Name}_{complexProperty.Name}";
-
-                        if (propertyName == column && item != null &&
-                            CheckForValidDataType(complexProperty.PropertyType, true))
-                        {
-                            var param = GetSqlParam<T>(complexProperty, customColumns, column);
-
-                            var complexType = item.GetType().GetProperty(property.Name);
-                            var value = complexType.GetValue(item, null);
-
-                            var propertyInfo = complexType.PropertyType.GetProperty(complexProperty.Name);
-                            var propValue = propertyInfo.GetValue(value, null);
-
-                            param.Value = propValue ?? DBNull.Value;
-
-                            sqlParameters.Add(param);
-                        }
-                    }
-                }
-
-                else if (property.Name == column && item != null && CheckForValidDataType(property.PropertyType, true))
-                {
-                    var param = GetSqlParam<T>(property, customColumns, column);
-
-                    var propValue = property.GetValue(item);
-
-                    param.Value = propValue ?? DBNull.Value;
-
-                    if (column == identityColumn && direction == ColumnDirectionType.InputOutput)
-                        param.Direction = ParameterDirection.InputOutput;
-
-                    sqlParameters.Add(param);
-                }
-        }
-
-        private static SqlParameter GetSqlParam<T>(PropInfo property, Dictionary<string, string> customColumns,
-            string column)
-        {
-            var sqlType = BulkOperationsUtility.GetSqlTypeFromDotNetType(property.PropertyType);
-
-            SqlParameter param;
-
-            if (customColumns != null && customColumns.TryGetValue(column, out var actualColumnName))
-                param = new SqlParameter($"@{actualColumnName}", sqlType);
-            else
-                param = new SqlParameter($"@{column}", sqlType);
-
-            return param;
+            var sqlParam = new SqlParameter
+            { 
+                ParameterName = $"@{parameterName}",
+                DbType = BulkOperationsUtility.GetSqlTypeFromDotNetType(valueType),
+                Value = value ?? DBNull.Value
+            };
+            sqlParameters.Add(sqlParam);
+            return sqlParam;
         }
 
         /// <summary>
@@ -743,41 +745,23 @@ namespace SqlBulkTools
         ///     Set this to true if user is manually adding columns. If AddAllColumns is used, then this can be omitted.
         /// </param>
         /// <returns></returns>
-        private static bool CheckForValidDataType(Type type, bool throwIfInvalid = false)
-        {
-            if (type.IsValueType ||
+        private static bool CheckForValidDataType(Type type, bool throwIfInvalid = false) =>
+            type.IsValueType ||
                 type == typeof(string) ||
                 type == typeof(byte[]) ||
                 type == typeof(char[]) ||
-//                type == typeof(SqlGeometry) || TODO: Review.
-//                type == typeof(SqlGeography) ||
+                //                type == typeof(SqlGeometry) || TODO: Review.
+                //                type == typeof(SqlGeography) ||
                 type == typeof(SqlXml)
-            )
-                return true;
-
-            if (throwIfInvalid)
-                throw new SqlBulkToolsException(
+            || (throwIfInvalid
+                ? throw new SqlBulkToolsException(
                     $"Only value, string, char[], byte[], SqlGeometry, SqlGeography and SqlXml types can be used " +
                     $"with SqlBulkTools. Refer to https://msdn.microsoft.com/en-us/library/cc716729(v=vs.110).aspx for " +
-                    $"more details.");
+                    $"more details.")
+                : false);
 
-            return false;
-        }
-
-        internal static string GetFullQualifyingTableName(string databaseName, string schemaName, string tableName)
-        {
-            var sb = new StringBuilder();
-            sb.Append("[");
-            sb.Append(databaseName);
-            sb.Append("].[");
-            sb.Append(schemaName);
-            sb.Append("].[");
-            sb.Append(tableName);
-            sb.Append("]");
-
-            return sb.ToString();
-        }
-
+        internal static string GetFullQualifyingTableName(string databaseName, string schemaName, string tableName) =>
+            $"[{databaseName}].[{schemaName}].[{tableName}]";
 
         /// <summary>
         ///     If there are MatchOnColumns that don't exist in columns, add to columns.
@@ -788,9 +772,12 @@ namespace SqlBulkTools
         private static HashSet<string> CheckForAdditionalColumns(HashSet<string> columns, List<string> matchOnColumns)
         {
             foreach (var col in matchOnColumns)
+            {
                 if (!columns.Contains(col))
-                    columns.Add(col);
-
+                {
+                    _ = columns.Add(col);
+                }
+            }
             return columns;
         }
 
@@ -798,33 +785,43 @@ namespace SqlBulkTools
             List<string> updateOnList)
         {
             if (columnMappings.Count <= 0)
+            {
                 return;
+            }
 
             foreach (var column in columnMappings)
             {
                 if (columns.Contains(column.Key))
                 {
-                    columns.Remove(column.Key);
-                    columns.Add(column.Value);
+                    _ = columns.Remove(column.Key);
+                    _ = columns.Add(column.Value);
                 }
 
                 for (var i = 0; i < updateOnList.ToArray().Length; i++)
+                {
                     if (updateOnList[i] == column.Key)
+                    {
                         updateOnList[i] = column.Value;
+                    }
+                }
             }
         }
 
         internal static void DoColumnMappings(Dictionary<string, string> columnMappings, HashSet<string> columns)
         {
-            if (columnMappings.Count <= 0) 
+            if (columnMappings.Count <= 0)
+            {
                 return;
-            
+            }
+
             foreach (var column in columnMappings)
+            {
                 if (columns.Contains(column.Key))
                 {
-                    columns.Remove(column.Key);
-                    columns.Add(column.Value);
+                    _ = columns.Remove(column.Key);
+                    _ = columns.Add(column.Value);
                 }
+            }
         }
 
         internal static void DoColumnMappings(Dictionary<string, string> columnMappings,
@@ -833,7 +830,9 @@ namespace SqlBulkTools
             foreach (var condition in predicateConditions)
             {
                 if (columnMappings.TryGetValue(condition.LeftName, out var columnName))
+                {
                     condition.CustomColumnMapping = columnName;
+                }
             }
         }
 
@@ -848,9 +847,11 @@ namespace SqlBulkTools
             bulkcopy.BatchSize = options.BatchSize;
             bulkcopy.BulkCopyTimeout = options.BulkCopyTimeout;
 
-            if (options.BulkCopyNotification == null) 
+            if (options.BulkCopyNotification == null)
+            {
                 return;
-            
+            }
+
             bulkcopy.NotifyAfter = options.BulkCopyNotification.NotifyAfter;
             bulkcopy.SqlRowsCopied += options.BulkCopyNotification.SqlRowsCopied;
         }
@@ -866,45 +867,43 @@ namespace SqlBulkTools
         {
             foreach (var column in columns.ToList().OrderBy(x => x))
             {
-                if (customColumnMappings.TryGetValue(column, out var mapping))
-                    bulkCopy.ColumnMappings.Add(mapping, mapping);
-
-                else
-                    bulkCopy.ColumnMappings.Add(column, column);
+                var actualColumn = GetActualColumn(customColumnMappings, column);
+                _ = bulkCopy.ColumnMappings.Add(actualColumn, actualColumn);
             }
         }
 
-        internal static HashSet<string> GetAllValueTypeAndStringColumns(List<PropInfo> propertyInfoList, Type type)
+        internal static HashSet<string> GetAllValueTypeAndStringColumns(List<PropInfo> propertyInfoList)
         {
             var columns = new HashSet<string>();
 
             foreach (var property in propertyInfoList)
             {
-                //property.PropertyType.CustomAttributes.First(x => x.AttributeType.)
-
-                var generatedTypeAttr = (DatabaseGeneratedAttribute)property.PropertyType.GetCustomAttribute(typeof(DatabaseGeneratedAttribute));
-
-                if (property.PropertyType.IsComplexType())
-                {
-                    var complexTypeProperties = property.PropertyType.GetProperties();
-
-                    foreach (var complexProperty in complexTypeProperties)
-                        if (CheckForValidDataType(complexProperty.PropertyType))
-                            columns.Add($"{property.Name}_{complexProperty.Name}");
-                }
-
-                else if (generatedTypeAttr != null && generatedTypeAttr.DatabaseGeneratedOption == DatabaseGeneratedOption.Computed)
-                {
-                    // do not add
-                }
-
-                else if (CheckForValidDataType(property.PropertyType))
-                {
-                    columns.Add(property.Name);
-                }
+                columns.AddProperty(property);
             }
 
             return columns;
+        }
+
+        private static void AddProperty(this HashSet<string> columns, PropInfo property, string basePropertyName = null)
+        {
+            if (property.PropertyType.IsComplexType())
+            {
+                basePropertyName = property.GetName(basePropertyName);
+
+                foreach (var complexProperty in property.PropertyType.ToPropInfoList())
+                {
+                    columns.AddProperty(complexProperty, basePropertyName); // recursive
+                }
+            }
+            else if (property.PropertyType.GetCustomAttribute<DatabaseGeneratedAttribute>() is DatabaseGeneratedAttribute dga
+                && dga.DatabaseGeneratedOption == DatabaseGeneratedOption.Computed)
+            {
+                return; // do not add
+            }
+            else if (CheckForValidDataType(property.PropertyType))
+            {
+                _ = columns.Add(property.GetName(basePropertyName));
+            }
         }
 
         internal static string GetOutputIdentityCmd(string identityColumn, ColumnDirectionType outputIdentity,
@@ -912,21 +911,23 @@ namespace SqlBulkTools
         {
             var sb = new StringBuilder();
             
-            if (identityColumn == null || outputIdentity != ColumnDirectionType.InputOutput) 
+            if (identityColumn == null || outputIdentity != ColumnDirectionType.InputOutput)
+            {
                 return null;
-            
+            }
+
             switch (operation)
             {
                 case OperationType.Insert:
-                    sb.Append($"OUTPUT inserted.{identityColumn} INTO {tmpTableName}({identityColumn}); ");
+                    _ = sb.Append($"OUTPUT inserted.{identityColumn} INTO {tmpTableName}({identityColumn}); ");
                     break;
                 case OperationType.InsertOrUpdate:
                 case OperationType.Update:
-                    sb.Append(
+                    _ = sb.Append(
                         $"OUTPUT Source.{Constants.InternalId}, inserted.{identityColumn} INTO {tmpTableName}({Constants.InternalId}, {identityColumn}); ");
                     break;
                 case OperationType.Delete:
-                    sb.Append(
+                    _ = sb.Append(
                         $"OUTPUT Source.{Constants.InternalId}, deleted.{identityColumn} INTO {tmpTableName}({Constants.InternalId}, {identityColumn}); ");
                     break;
                 default:
@@ -957,10 +958,8 @@ namespace SqlBulkTools
             }
         }
 
-        internal static string GetDropTmpTableCmd()
-        {
-            return $"DROP TABLE {Constants.TempOutputTableName};";
-        }
+        internal static string GetDropTmpTableCmd() =>
+            $"DROP TABLE {Constants.TempOutputTableName};";
 
         internal static string GetIndexManagementCmd(string action, string tableName,
             string schema, IDbConnection conn)
@@ -976,14 +975,13 @@ namespace SqlBulkTools
         /// <summary>
         ///     Gets schema information for a table. Used to get SQL type of property.
         /// </summary>
+        /// <param name="bulk"></param>
         /// <param name="conn"></param>
         /// <param name="schema"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        internal static DataTable GetDatabaseSchema(BulkOperations bulk, SqlConnection conn, string schema, string tableName)
-        {
-            return bulk.Prepare(conn, schema, tableName);
-        }
+        internal static DataTable GetDatabaseSchema(BulkOperations bulk, SqlConnection conn, string schema, string tableName) =>
+            bulk.Prepare(conn, schema, tableName);
 
         internal static void InsertToTmpTable(SqlConnection conn, DataTable dt, BulkCopySettings bulkCopySettings, SqlTransaction transaction)
         {
@@ -993,7 +991,10 @@ namespace SqlBulkTools
 
                 SetSqlBulkCopySettings(bulkcopy, bulkCopySettings);
 
-                foreach (var column in dt.Columns) bulkcopy.ColumnMappings.Add(column.ToString(), column.ToString());
+                foreach (var column in dt.Columns)
+                {
+                    _ = bulkcopy.ColumnMappings.Add(column.ToString(), column.ToString());
+                }
 
                 bulkcopy.WriteToServer(dt);
             }
@@ -1007,7 +1008,10 @@ namespace SqlBulkTools
 
                 SetSqlBulkCopySettings(bulkcopy, bulkCopySettings);
 
-                foreach (var column in dt.Columns) bulkcopy.ColumnMappings.Add(column.ToString(), column.ToString());
+                foreach (var column in dt.Columns)
+                {
+                    _ = bulkcopy.ColumnMappings.Add(column.ToString(), column.ToString());
+                }
 
                 await bulkcopy.WriteToServerAsync(dt, cancellationToken).ConfigureAwait(false);
             }
@@ -1018,7 +1022,9 @@ namespace SqlBulkTools
         {
             var identityProperty = propertyInfoList.Single(p => p.Name == identityColumn);
             if (!identityProperty.CanWrite)
+            {
                 throw new SqlBulkToolsException(GetPrivateSetterExceptionMessage(identityColumn));
+            }
 
             switch (operationType)
             {
@@ -1034,13 +1040,16 @@ namespace SqlBulkTools
                         while (reader.Read())
                         {
                             if (outputIdentityDic.TryGetValue(reader.GetInt32(0), out var item))
+                            {
                                 identityProperty.SetValue(item, reader.GetInt32(1));
+                            }
                         }
                     }
 
                     command.CommandText = GetDropTmpTableCmd();
-                    command.ExecuteNonQuery();
+                    _ = command.ExecuteNonQuery();
                     break;
+
                 case OperationType.Insert:
                     command.CommandText =
                         $"SELECT {identityColumn} FROM {Constants.TempOutputTableName} ORDER BY {identityColumn};";
@@ -1058,7 +1067,7 @@ namespace SqlBulkTools
                     }
 
                     command.CommandText = GetDropTmpTableCmd();
-                    command.ExecuteNonQuery();
+                    _ = command.ExecuteNonQuery();
                     break;
             }
         }
@@ -1068,7 +1077,9 @@ namespace SqlBulkTools
         {
             var identityProperty = propertyInfoList.Single(p => p.Name == identityColumn);
             if (!identityProperty.CanWrite)
+            {
                 throw new SqlBulkToolsException(GetPrivateSetterExceptionMessage(identityColumn));
+            }
 
             switch (operationType)
             {
@@ -1081,16 +1092,19 @@ namespace SqlBulkTools
 
                     using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync().ConfigureAwait(false))
                         {
                             if (outputIdentityDic.TryGetValue(reader.GetInt32(0), out var item))
+                            {
                                 identityProperty.SetValue(item, reader.GetInt32(1));
+                            }
                         }
                     }
 
                     command.CommandText = GetDropTmpTableCmd();
-                    await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                    _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                     break;
+
                 case OperationType.Insert:
                     command.CommandText =
                         $"SELECT {identityColumn} FROM {Constants.TempOutputTableName} ORDER BY {identityColumn};";
@@ -1100,7 +1114,7 @@ namespace SqlBulkTools
                         var items = list.ToList();
                         var counter = 0;
 
-                        while (reader.Read())
+                        while (await reader.ReadAsync().ConfigureAwait(false))
                         {
                             identityProperty.SetValue(items[counter], reader.GetInt32(0));
                             counter++;
@@ -1108,19 +1122,16 @@ namespace SqlBulkTools
                     }
 
                     command.CommandText = GetDropTmpTableCmd();
-                    await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                    _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                     break;
             }
         }
 
-        private static string GetPrivateSetterExceptionMessage(string columnName)
-        {
-            return $"No setter method available on property '{columnName}'. Could not write output back to property.";
-        }
+        private static string GetPrivateSetterExceptionMessage(string columnName) =>
+            $"No setter method available on property '{columnName}'. Could not write output back to property.";
 
         internal static string GetInsertIntoStagingTableCmd(SqlConnection conn, string schema,
-            string tableName,
-            HashSet<string> columns, string identityColumn, ColumnDirectionType outputIdentity)
+            string tableName, HashSet<string> columns, string identityColumn, ColumnDirectionType outputIdentity)
         {
             var fullTableName = GetFullQualifyingTableName(conn.Database, schema,
                 tableName);
@@ -1143,28 +1154,30 @@ namespace SqlBulkTools
         /// <param name="predicate"></param>
         /// <param name="predicateType"></param>
         /// <param name="predicateList"></param>
-        /// <param name="sqlParamsList"></param>
+        /// <param name="sqlParameters"></param>
         /// <param name="sortOrder"></param>
         /// <param name="appendParam"></param>
         internal static void AddPredicate<T>(Expression<Func<T, bool>> predicate, PredicateType predicateType,
-            List<PredicateCondition> predicateList,
-            List<SqlParameter> sqlParamsList, int sortOrder, string appendParam)
+            List<PredicateCondition> predicateList, List<SqlParameter> sqlParameters, int sortOrder, string appendParam)
         {
             string value;
             PredicateCondition condition;
 
-            var binaryBody = predicate.Body as BinaryExpression;
-
-            if (binaryBody == null)
+            if (!(predicate.Body is BinaryExpression binaryBody))
+            {
                 throw new SqlBulkToolsException(
                     $"Expression not supported for {GetPredicateMethodName(predicateType)}");
+            }
 
-            var leftName = ((MemberExpression) binaryBody.Left).Member.Name;
+            var memberExpr = binaryBody.Left as MemberExpression;
+            var leftName = memberExpr.Member.Name;
 
-            if (((MemberExpression) binaryBody.Left).Expression.Type.IsComplexType()
-                && ((MemberExpression) binaryBody.Left).Expression is MemberExpression)
-                leftName =
-                    $"{((MemberExpression) ((MemberExpression) binaryBody.Left).Expression).Member.Name}_{leftName}";
+            while (memberExpr is object && memberExpr.Expression.Type.IsComplexType()
+                && memberExpr.Expression is MemberExpression complexExpr)
+            {
+                leftName = $"{complexExpr.Member.Name}_{leftName}";
+                memberExpr = complexExpr;
+            }
 
             // For expression types Equal and NotEqual, it's possible for user to pass null value. This handles the null use case. 
             // SqlParameter is not added when comparison to null value is used. 
@@ -1174,7 +1187,6 @@ namespace SqlBulkTools
                 {
                     //leftName = ((MemberExpression)binaryBody.Left).Member.Name;
                     value = Expression.Lambda(binaryBody.Right).Compile().DynamicInvoke()?.ToString();
-
 
                     if (value != null)
                     {
@@ -1188,12 +1200,8 @@ namespace SqlBulkTools
                             SortOrder = sortOrder
                         };
 
-                        var sqlType = BulkOperationsUtility.GetSqlTypeFromDotNetType(condition.ValueType);
-
                         var paramName = appendParam != null ? leftName + appendParam + sortOrder : leftName;
-                        var param = new SqlParameter($"@{paramName}", sqlType);
-                        param.Value = condition.Value;
-                        sqlParamsList.Add(param);
+                        _ = sqlParameters.AddSqlParameter(paramName, condition.Value, condition.ValueType);
                     }
                     else
                     {
@@ -1208,13 +1216,8 @@ namespace SqlBulkTools
                     }
 
                     predicateList.Add(condition);
-
-
                     break;
                 }
-
-                // For expression types Equal and NotEqual, it's possible for user to pass null value. This handles the null use case. 
-                // SqlParameter is not added when comparison to null value is used. 
                 case ExpressionType.Equal:
                 {
                     //leftName = ((MemberExpression)binaryBody.Left).Member.Name;
@@ -1232,11 +1235,8 @@ namespace SqlBulkTools
                             SortOrder = sortOrder
                         };
 
-                        var sqlType = BulkOperationsUtility.GetSqlTypeFromDotNetType(condition.ValueType);
                         var paramName = appendParam != null ? leftName + appendParam + sortOrder : leftName;
-                        var param = new SqlParameter($"@{paramName}", sqlType);
-                        param.Value = condition.Value;
-                        sqlParamsList.Add(param);
+                        _ = sqlParameters.AddSqlParameter(paramName, condition.Value, condition.ValueType);
                     }
                     else
                     {
@@ -1251,7 +1251,6 @@ namespace SqlBulkTools
                     }
 
                     predicateList.Add(condition);
-
                     break;
                 }
                 case ExpressionType.LessThan:
@@ -1259,7 +1258,7 @@ namespace SqlBulkTools
                     //leftName = ((MemberExpression)binaryBody.Left).Member.Name;
                     value = Expression.Lambda(binaryBody.Right).Compile().DynamicInvoke()?.ToString();
                     BuildCondition(leftName, value, binaryBody.Right.Type, ExpressionType.LessThan, predicateList,
-                        sqlParamsList,
+                        sqlParameters,
                         predicateType, sortOrder, appendParam);
                     break;
                 }
@@ -1269,7 +1268,7 @@ namespace SqlBulkTools
                     value = Expression.Lambda(binaryBody.Right).Compile().DynamicInvoke()?.ToString();
                     BuildCondition(leftName, value, binaryBody.Right.Type, ExpressionType.LessThanOrEqual,
                         predicateList,
-                        sqlParamsList, predicateType, sortOrder, appendParam);
+                        sqlParameters, predicateType, sortOrder, appendParam);
                     break;
                 }
                 case ExpressionType.GreaterThan:
@@ -1277,7 +1276,7 @@ namespace SqlBulkTools
                     //leftName = ((MemberExpression)binaryBody.Left).Member.Name;
                     value = Expression.Lambda(binaryBody.Right).Compile().DynamicInvoke()?.ToString();
                     BuildCondition(leftName, value, binaryBody.Right.Type, ExpressionType.GreaterThan, predicateList,
-                        sqlParamsList, predicateType, sortOrder, appendParam);
+                        sqlParameters, predicateType, sortOrder, appendParam);
                     break;
                 }
                 case ExpressionType.GreaterThanOrEqual:
@@ -1286,7 +1285,7 @@ namespace SqlBulkTools
                     value = Expression.Lambda(binaryBody.Right).Compile().DynamicInvoke()?.ToString();
                     BuildCondition(leftName, value, binaryBody.Right.Type, ExpressionType.GreaterThanOrEqual,
                         predicateList,
-                        sqlParamsList, predicateType, sortOrder, appendParam);
+                        sqlParameters, predicateType, sortOrder, appendParam);
                     break;
                 }
                 case ExpressionType.AndAlso:
@@ -1301,7 +1300,6 @@ namespace SqlBulkTools
                     throw new SqlBulkToolsException(
                         $"Or || expression not supported for {GetPredicateMethodName(predicateType)}.");
                 }
-
                 default:
                 {
                     throw new SqlBulkToolsException(
@@ -1314,37 +1312,28 @@ namespace SqlBulkTools
         internal static string GetExpressionLeftName<T>(Expression<Func<T, bool>> predicate,
             PredicateType predicateType, string columnType)
         {
-            var binaryBody = predicate.Body as BinaryExpression;
-
-            if (binaryBody == null)
+            if (!(predicate.Body is BinaryExpression binaryBody))
+            {
                 throw new SqlBulkToolsException(
                     $"Expression not supported for {GetPredicateMethodName(predicateType)}");
+            }
 
             var leftName = ((MemberExpression) binaryBody.Left).Member.Name;
 
-            if (leftName == null) throw new SqlBulkToolsException($"{columnType} can't be null");
-
-            return leftName;
+            return leftName ?? throw new SqlBulkToolsException($"{columnType} can't be null");
         }
 
         /// <summary>
         /// </summary>
         /// <param name="predicateType"></param>
         /// <returns></returns>
-        internal static string GetPredicateMethodName(PredicateType predicateType)
-        {
-            return predicateType == PredicateType.Update
-                ? "UpdateWhen(...)"
-                : predicateType == PredicateType.Delete
-                    ? "DeleteWhen(...)"
-                    : predicateType == PredicateType.Where
-                        ? "Where(...)"
-                        : predicateType == PredicateType.And
-                            ? "And(...)"
-                            : predicateType == PredicateType.Or
-                                ? "Or(...)"
-                                : string.Empty;
-        }
+        internal static string GetPredicateMethodName(PredicateType predicateType) =>
+              predicateType == PredicateType.Update ? "UpdateWhen(...)"
+            : predicateType == PredicateType.Delete ? "DeleteWhen(...)"
+            : predicateType == PredicateType.Where  ? "Where(...)"
+            : predicateType == PredicateType.And    ? "And(...)"
+            : predicateType == PredicateType.Or     ? "Or(...)"
+            : string.Empty;
 
         /// <summary>
         /// </summary>
@@ -1353,13 +1342,13 @@ namespace SqlBulkTools
         /// <param name="valueType"></param>
         /// <param name="expressionType"></param>
         /// <param name="predicateList"></param>
-        /// <param name="sqlParamsList"></param>
+        /// <param name="sqlParameters"></param>
         /// <param name="sortOrder"></param>
         /// <param name="appendParam"></param>
         /// <param name="predicateType"></param>
         private static void BuildCondition(string leftName, string value, Type valueType,
             ExpressionType expressionType,
-            List<PredicateCondition> predicateList, List<SqlParameter> sqlParamsList, PredicateType predicateType,
+            List<PredicateCondition> predicateList, List<SqlParameter> sqlParameters, PredicateType predicateType,
             int sortOrder, string appendParam)
         {
             var condition = new PredicateCondition
@@ -1374,12 +1363,8 @@ namespace SqlBulkTools
 
             predicateList.Add(condition);
 
-
-            var sqlType = BulkOperationsUtility.GetSqlTypeFromDotNetType(condition.ValueType);
             var paramName = appendParam != null ? leftName + appendParam + sortOrder : leftName;
-            var param = new SqlParameter($"@{paramName}", sqlType);
-            param.Value = condition.Value;
-            sqlParamsList.Add(param);
+            _ = sqlParameters.AddSqlParameter(paramName, condition.Value, condition.ValueType);
         }
 
         internal struct PrecisionType

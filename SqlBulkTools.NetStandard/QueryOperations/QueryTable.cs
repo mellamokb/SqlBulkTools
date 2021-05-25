@@ -57,7 +57,7 @@ namespace SqlBulkTools.QueryOperations
         /// <returns></returns>
         public QueryAddColumnList<T> AddAllColumns()
         {
-            Columns = BulkOperationsHelper.GetAllValueTypeAndStringColumns(_propertyInfoList, typeof(T));
+            Columns = BulkOperationsHelper.GetAllValueTypeAndStringColumns(_propertyInfoList);
 
             return new QueryAddColumnList<T>(_singleEntity, _tableName, Columns, _schema, _sqlParams, _propertyInfoList);
         }

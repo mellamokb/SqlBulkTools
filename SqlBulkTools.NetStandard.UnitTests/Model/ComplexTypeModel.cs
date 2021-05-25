@@ -29,5 +29,13 @@ namespace SqlBulkTools.TestCommon.Model
         public double? TotalCost { get; set; }
 
         public DateTime CreationDate { get; set; }
+
+        public DeepComplex Inception { get; set; }
+    }
+
+    [ComplexType]
+    public class DeepComplex
+    {
+        public string DeepTest { get; set; }
     }
 }

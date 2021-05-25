@@ -245,7 +245,7 @@ namespace SqlBulkTools
             string fullQualifiedTableName = BulkOperationsHelper.GetFullQualifyingTableName(connection.Database, _schema,
                 _tableName);
 
-            BulkOperationsHelper.AddSqlParamsForQuery(_propertyInfoList, _sqlParams, _columns, _singleEntity, customColumns: _customColumnMappings);
+            BulkOperationsHelper.AddSqlParamsForQuery(_propertyInfoList, _sqlParams, _columns, _singleEntity, customColumnMappings: _customColumnMappings);
             var concatenatedQuery = _whereConditions.Concat(_andConditions).Concat(_orConditions).OrderBy(x => x.SortOrder);
             BulkOperationsHelper.DoColumnMappings(_customColumnMappings, _columns);
 

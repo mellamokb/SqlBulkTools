@@ -66,10 +66,8 @@ namespace SqlBulkTools.IntegrationTests
             Assert.True(_dataAccess.GetCustomIdentityColumnNameTestList().Count == 30);
         }
 
-        [Fact]
-        public void SqlBulkTools_BulkInsertForComplexType_AddAllColumns()
+        private List<ComplexTypeModel> GetComplexTypeModelList()
         {
-            var bulk = new BulkOperations();
             var complexTypeModelList = new List<ComplexTypeModel>();
 
             for (var i = 0; i < 30; i++)
@@ -78,16 +76,33 @@ namespace SqlBulkTools.IntegrationTests
                 {
                     AverageEstimate = new EstimatedStats
                     {
-                        TotalCost = 23.20
+                        TotalCost = 23.20,
+                        Inception = new DeepComplex
+                        {
+                            DeepTest = "Test"
+                        }
                     },
                     MinEstimate = new EstimatedStats
                     {
-                        TotalCost = 10.20
+                        TotalCost = 10.20,
+                        Inception = new DeepComplex
+                        {
+                            DeepTest = "Test2"
+                        }
                     },
                     Competition = 30,
                     SearchVolume = 234.34
                 });
             }
+
+            return complexTypeModelList;
+        }
+
+        [Fact]
+        public void SqlBulkTools_BulkInsertForComplexType_AddAllColumns()
+        {
+            var bulk = new BulkOperations();
+            var complexTypeModelList = GetComplexTypeModelList();
 
             using (var trans = new TransactionScope())
             {
@@ -116,7 +131,7 @@ namespace SqlBulkTools.IntegrationTests
         }
 
         [Fact]
-        public void SqlBulkTools_BulkInsertForDeepComplexTypeWithoutAttribute_AddAllColumns()
+        public void SqlBulkTools_BulkInsertForComplexTypeWithoutAttribute_AddAllColumns()
         {
             var bulk = new BulkOperations();
             var complexTypeModelList = new List<ComplexTypeModelWithoutAttribute>();
@@ -169,25 +184,7 @@ namespace SqlBulkTools.IntegrationTests
         public void SqlBulkTools_BulkInsertOrUpdateForComplexType_AddAllColumns()
         {
             var bulk = new BulkOperations();
-            var complexTypeModelList = new List<ComplexTypeModel>();
-
-            for (var i = 0; i < 30; i++)
-            {
-                complexTypeModelList.Add(new ComplexTypeModel
-                {
-                    AverageEstimate = new EstimatedStats
-                    {
-                        TotalCost = 23.20
-                    },
-                    MinEstimate = new EstimatedStats
-                    {
-                        TotalCost = 10.20
-                    },
-                    Competition = 30,
-                    SearchVolume = 234.34
-
-                });
-            }
+            var complexTypeModelList = GetComplexTypeModelList();
 
             using (var trans = new TransactionScope())
             {
@@ -216,28 +213,43 @@ namespace SqlBulkTools.IntegrationTests
         }
 
         [Fact]
+        public void SqlBulkTools_BulkInsertOrUpdateForDeepComplexType_With_UpdateWhen()
+        {
+            var bulk = new BulkOperations();
+            var complexTypeModelList = GetComplexTypeModelList();
+
+            using (var trans = new TransactionScope())
+            {
+                using (var conn = new SqlConnection(_dataAccess.ConnectionString))
+                {
+                    _ = bulk.Setup<ComplexTypeModel>()
+                        .ForDeleteQuery()
+                        .WithTable("ComplexTypeTest")
+                        .Delete()
+                        .AllRecords();
+
+                    _ = bulk.Setup<ComplexTypeModel>()
+                        .ForCollection(complexTypeModelList)
+                        .WithTable("ComplexTypeTest")
+                        .AddAllColumns()
+                        .BulkInsertOrUpdate()
+                        .MatchTargetOn(x => x.Id)
+                        .SetIdentityColumn(x => x.Id)
+                        .UpdateWhen(x => x.AverageEstimate.Inception.DeepTest != null)
+                        .Commit(conn);
+                }
+
+                trans.Complete();
+            }
+
+            Assert.True(_dataAccess.GetComplexTypeModelCount() > 0);
+        }
+
+        [Fact]
         public void SqlBulkTools_BulkInsertForComplexType_AddColumnsManually()
         {
             var bulk = new BulkOperations();
-            var complexTypeModelList = new List<ComplexTypeModel>();
-
-            for (var i = 0; i < 30; i++)
-            {
-                complexTypeModelList.Add(new ComplexTypeModel
-                {
-                    AverageEstimate = new EstimatedStats
-                    {
-                        TotalCost = 23.20
-                    },
-                    MinEstimate = new EstimatedStats
-                    {
-                        TotalCost = 10.20
-                    },
-                    Competition = 30,
-                    SearchVolume = 234.34
-
-                });
-            }
+            var complexTypeModelList = GetComplexTypeModelList(); 
 
             using (var trans = new TransactionScope())
             {
@@ -254,9 +266,11 @@ namespace SqlBulkTools.IntegrationTests
                         .WithTable("ComplexTypeTest")
                         .AddColumn(x => x.AverageEstimate.CreationDate)
                         .AddColumn(x => x.AverageEstimate.TotalCost)
+                        .AddColumn(x => x.AverageEstimate.Inception.DeepTest)
                         .AddColumn(x => x.Competition)
                         .AddColumn(x => x.MinEstimate.CreationDate, "MinEstimate_CreationDate") // Testing custom column mapping
                         .AddColumn(x => x.MinEstimate.TotalCost)
+                        .AddColumn(x => x.MinEstimate.Inception.DeepTest)
                         .AddColumn(x => x.SearchVolume)                                                
                         .BulkInsert()
                         .SetIdentityColumn(x => x.Id)

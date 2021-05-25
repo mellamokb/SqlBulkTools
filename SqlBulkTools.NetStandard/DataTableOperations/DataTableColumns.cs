@@ -46,7 +46,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public DataTableAllColumnSelect<T> AddAllColumns()
         {
-            Columns = BulkOperationsHelper.GetAllValueTypeAndStringColumns(_propertyInfoList, typeof(T));
+            Columns = BulkOperationsHelper.GetAllValueTypeAndStringColumns(_propertyInfoList);
             return new DataTableAllColumnSelect<T>(_ext, _list, Columns, _ordinalDic, _propertyInfoList);
         }
 
