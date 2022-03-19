@@ -1,17 +1,17 @@
-﻿using AutoFixture;
-using Microsoft.SqlServer.Types;
-using SqlBulkTools.Core;
-using SqlBulkTools.Enumeration;
-using SqlBulkTools.IntegrationTests.Data;
-using SqlBulkTools.TestCommon;
-using SqlBulkTools.TestCommon.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Transactions;
+using AutoFixture;
+using Microsoft.SqlServer.Types;
+using SqlBulkTools.Core;
+using SqlBulkTools.Enumeration;
+using SqlBulkTools.IntegrationTests.Data;
+using SqlBulkTools.TestCommon;
+using SqlBulkTools.TestCommon.Model;
 using Xunit;
 
 namespace SqlBulkTools.IntegrationTests
@@ -34,7 +34,7 @@ namespace SqlBulkTools.IntegrationTests
             {
                 customIdentityColumnList.Add(new CustomIdentityColumnNameTest
                 {
-                    ColumnA = i.ToString()               
+                    ColumnA = i.ToString()
                 });
             }
 
@@ -249,7 +249,7 @@ namespace SqlBulkTools.IntegrationTests
         public void SqlBulkTools_BulkInsertForComplexType_AddColumnsManually()
         {
             var bulk = new BulkOperations();
-            var complexTypeModelList = GetComplexTypeModelList(); 
+            var complexTypeModelList = GetComplexTypeModelList();
 
             using (var trans = new TransactionScope())
             {
@@ -271,7 +271,7 @@ namespace SqlBulkTools.IntegrationTests
                         .AddColumn(x => x.MinEstimate.CreationDate, "MinEstimate_CreationDate") // Testing custom column mapping
                         .AddColumn(x => x.MinEstimate.TotalCost)
                         .AddColumn(x => x.MinEstimate.Inception.DeepTest)
-                        .AddColumn(x => x.SearchVolume)                                                
+                        .AddColumn(x => x.SearchVolume)
                         .BulkInsert()
                         .SetIdentityColumn(x => x.Id)
                         .Commit(conn);
@@ -400,6 +400,49 @@ namespace SqlBulkTools.IntegrationTests
 
                 // Add new rows
                 _bookCollection.AddRange(_randomizer.GetRandomCollection(newRows));
+
+
+                var time = BulkInsertOrUpdateAllColumns(_bookCollection);
+                results.Add(time);
+
+                Assert.Equal(rows + newRows, _dataAccess.GetBookCount());
+
+            }
+
+            var avg = results.Average(l => l);
+            Trace.WriteLine("Average result (" + _repeatTimes + " iterations): " + avg.ToString("#.##") + " ms\n\n");
+        }
+
+        //[Fact]
+        public void SqlBulkTools_BulkInsertOrUpdateWithDuplicateKeys()
+        {
+            const int rows = 1000, newRows = 1;
+
+            BulkDelete(_dataAccess.GetBookList());
+            var fixture = new Fixture();
+            _bookCollection = _randomizer.GetRandomCollection(rows);
+
+            var results = new List<long>();
+
+            Trace.WriteLine("Testing BulkInsertOrUpdateAllColumns with " + (rows + newRows) + " rows");
+
+            for (var i = 0; i < _repeatTimes; i++)
+            {
+                BulkInsert(_bookCollection);
+
+                // Update some rows
+                for (var j = 0; j < 200; j++)
+                {
+                    var newBook = fixture.Build<Book>().Without(s => s.ISBN).Create();
+                    var prevIsbn = _bookCollection[j].ISBN;
+                    _bookCollection[j] = newBook;
+                    _bookCollection[j].ISBN = prevIsbn;
+                }
+
+                // Add duplicate row
+                var dupBook = fixture.Build<Book>().Without(s => s.ISBN).Create();
+                dupBook.ISBN = _bookCollection.First().ISBN;
+                _bookCollection.Add(dupBook);
 
 
                 var time = BulkInsertOrUpdateAllColumns(_bookCollection);
@@ -552,7 +595,7 @@ namespace SqlBulkTools.IntegrationTests
 
             using var conn = new SqlConnection(_dataAccess.ConnectionString);
 
-            Assert.Throws<IdentityException>(() => 
+            Assert.Throws<IdentityException>(() =>
                 bulk.Setup<Book>()
                     .ForCollection(_bookCollection)
                     .WithTable("Books")
@@ -636,7 +679,7 @@ namespace SqlBulkTools.IntegrationTests
 
             // Assert
             Assert.True(_dataAccess.GetSchemaTest2List().Any());
-        }    
+        }
 
         [Fact]
         public void SqlBulkTools_WithCustomSchema_WhenWithTableIncludesSchemaName()
@@ -754,7 +797,7 @@ namespace SqlBulkTools.IntegrationTests
 
                 }
                 trans.Complete();
-            }           
+            }
 
             using (var secondConn = new SqlConnection(_dataAccess.ConnectionString))
             {
@@ -2028,7 +2071,7 @@ namespace SqlBulkTools.IntegrationTests
 
         [Fact]
         public void SqlBulkTools_BulkInsertOrUpdate_TestDataTypes()
-        { 
+        {
             BulkDelete(_dataAccess.GetBookList());
 
             var todaysDate = DateTime.Today;
