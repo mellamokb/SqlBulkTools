@@ -13,6 +13,7 @@ namespace SqlBulkTools
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="bulk"></param>
         /// <param name="list"></param>
         /// <param name="tableName"></param>
         /// <param name="columns"></param>
@@ -49,6 +50,12 @@ namespace SqlBulkTools
             return AddColumn(BulkOperationsHelper.GetPropertyName(columnName));
         }
 
+        /// <summary>
+        /// Add each column that you want to include in the query. Only include the columns that are relevant to the 
+        /// procedure for best performance. 
+        /// </summary>
+        /// <param name="columnNames">Column name as represented in database</param>
+        /// <returns></returns>
         public BulkAddColumn<T> AddColumns(params string[] columnNames)
         {
             foreach (var column in columnNames)
@@ -56,6 +63,12 @@ namespace SqlBulkTools
             return this;
         }
 
+        /// <summary>
+        /// Add each column that you want to include in the query. Only include the columns that are relevant to the 
+        /// procedure for best performance. 
+        /// </summary>
+        /// <param name="columnNames">Column name as represented in database</param>
+        /// <returns></returns>
         public BulkAddColumn<T> AddColumns(params Expression<Func<T, object>>[] columnNames)
         {
             foreach (var column in columnNames)

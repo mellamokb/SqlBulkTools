@@ -158,6 +158,14 @@ namespace SqlBulkTools
             return this;
         }
 
+        /// <summary>
+        /// Commits a transaction to database. A valid setup must exist for the operation to be
+        /// successful.
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public int Commit(IDbConnection connection, IDbTransaction transaction = null)
         {
             if (connection is SqlConnection == false)
@@ -166,6 +174,15 @@ namespace SqlBulkTools
             return Commit((SqlConnection)connection, (SqlTransaction)transaction);
         }
 
+        /// <summary>
+        /// Commits a transaction to database. A valid setup must exist for the operation to be
+        /// successful.
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="transaction"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public Task<int> CommitAsync(IDbConnection connection, IDbTransaction transaction = null, CancellationToken cancellationToken = default)
         {
             if (connection is SqlConnection == false)
@@ -179,6 +196,7 @@ namespace SqlBulkTools
         /// successful.
         /// </summary>
         /// <param name="connection"></param>
+        /// <param name="transaction"></param>
         /// <returns></returns>
         public int Commit(SqlConnection connection, SqlTransaction transaction)
         {
@@ -212,6 +230,8 @@ namespace SqlBulkTools
         /// successful.
         /// </summary>
         /// <param name="connection"></param>
+        /// <param name="transaction"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async Task<int> CommitAsync(SqlConnection connection, SqlTransaction transaction, CancellationToken cancellationToken)
         {

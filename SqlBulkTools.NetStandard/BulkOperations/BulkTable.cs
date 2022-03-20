@@ -23,7 +23,9 @@ namespace SqlBulkTools.BulkCopy
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="bulk"></param>
         /// <param name="list"></param>
+        /// <param name="propTypes"></param>
         /// <param name="tableName"></param>
         /// <param name="schema"></param>
         public BulkTable(BulkOperations bulk, IEnumerable<T> list, Dictionary<string, Type> propTypes, string tableName, string schema)
@@ -61,6 +63,11 @@ namespace SqlBulkTools.BulkCopy
             return AddColumn(BulkOperationsHelper.GetPropertyName(columnName));
         }
 
+        /// <summary>
+        /// Add each column that you want to include in the query. Only include the columns that are relevant to the procedure for best performance. 
+        /// </summary>
+        /// <param name="columnNames"></param>
+        /// <returns></returns>
         public BulkAddColumn<T> AddColumns(params string[] columnNames)
         {
             foreach (var column in columnNames)
@@ -70,6 +77,11 @@ namespace SqlBulkTools.BulkCopy
             return new BulkAddColumn<T>(bulk, _list, _tableName, Columns, CustomColumnMappings, _schema, _bulkCopySettings, _propertyInfoList);
         }
 
+        /// <summary>
+        /// Add each column that you want to include in the query. Only include the columns that are relevant to the procedure for best performance. 
+        /// </summary>
+        /// <param name="columnNames"></param>
+        /// <returns></returns>
         public BulkAddColumn<T> AddColumns(params Expression<Func<T, object>>[] columnNames)
         {
             foreach (var column in columnNames)

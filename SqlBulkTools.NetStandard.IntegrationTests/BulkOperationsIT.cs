@@ -413,7 +413,7 @@ namespace SqlBulkTools.IntegrationTests
             Trace.WriteLine("Average result (" + _repeatTimes + " iterations): " + avg.ToString("#.##") + " ms\n\n");
         }
 
-        //[Fact]
+        [Fact] // TODO: this test still fails
         public void SqlBulkTools_BulkInsertOrUpdateWithDuplicateKeys()
         {
             const int rows = 1000, newRows = 1;

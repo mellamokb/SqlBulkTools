@@ -13,6 +13,7 @@ namespace SqlBulkTools
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="bulk"></param>
         /// <param name="list"></param>
         /// <param name="tableName"></param>
         /// <param name="columns"></param>

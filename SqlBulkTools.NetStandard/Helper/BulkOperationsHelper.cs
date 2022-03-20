@@ -1017,7 +1017,7 @@ namespace SqlBulkTools
                         bulkcopy.ColumnMappings.Add(column.ToString(), column.ToString());
                     }
 
-                    bulkcopy.WriteToServer(dt);
+                    await bulkcopy.WriteToServerAsync(dt, cancellationToken).ConfigureAwait(false);
 
                 }
                 catch (SqlException e)
@@ -1181,14 +1181,6 @@ namespace SqlBulkTools
             return comm;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <param name="predicateType"></param>
-        /// <param name="predicateList"></param>
-        /// <param name="sqlParameters"></param>
-        /// <param name="sortOrder"></param>
-        /// <param name="appendParam"></param>
         internal static void AddPredicate<T>(Expression<Func<T, bool>> predicate, PredicateType predicateType,
             List<PredicateCondition> predicateList, List<SqlParameter> sqlParameters, int sortOrder, string appendParam)
         {
@@ -1355,10 +1347,6 @@ namespace SqlBulkTools
             return leftName ?? throw new SqlBulkToolsException($"{columnType} can't be null");
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="predicateType"></param>
-        /// <returns></returns>
         internal static string GetPredicateMethodName(PredicateType predicateType) =>
               predicateType == PredicateType.Update ? "UpdateWhen(...)"
             : predicateType == PredicateType.Delete ? "DeleteWhen(...)"
@@ -1367,17 +1355,6 @@ namespace SqlBulkTools
             : predicateType == PredicateType.Or     ? "Or(...)"
             : string.Empty;
 
-        /// <summary>
-        /// </summary>
-        /// <param name="leftName"></param>
-        /// <param name="value"></param>
-        /// <param name="valueType"></param>
-        /// <param name="expressionType"></param>
-        /// <param name="predicateList"></param>
-        /// <param name="sqlParameters"></param>
-        /// <param name="sortOrder"></param>
-        /// <param name="appendParam"></param>
-        /// <param name="predicateType"></param>
         private static void BuildCondition(string leftName, string value, Type valueType,
             ExpressionType expressionType,
             List<PredicateCondition> predicateList, List<SqlParameter> sqlParameters, PredicateType predicateType,

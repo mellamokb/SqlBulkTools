@@ -105,7 +105,7 @@ namespace SqlBulkTools.UnitTests
             var ex = Assert.Throws<SqlBulkToolsException>(() => 
                 BulkOperationsHelper.GetTableAndSchema("TestSchema.InvalidName.MyTable"));
             
-            Assert.Equal(ex.Message, "Table name can't contain more than one period '.' character.");
+            Assert.Equal("Table name can't contain more than one period '.' character.", ex.Message);
             
         }
 
@@ -287,14 +287,14 @@ namespace SqlBulkTools.UnitTests
 
             var result = BulkOperationsHelper.CreateDataTable<ComplexTypeModel>(propertyInfoList, columns, null, new Dictionary<string, int>());
 
-            Assert.Equal(result.Columns["AverageEstimate_TotalCost"].DataType, typeof(double));
-            Assert.Equal(result.Columns["AverageEstimate_CreationDate"].DataType, typeof(DateTime));
-            Assert.Equal(result.Columns["AverageEstimate_Inception_DeepTest"].DataType, typeof(string));
-            Assert.Equal(result.Columns["MinEstimate_TotalCost"].DataType, typeof(double));
-            Assert.Equal(result.Columns["MinEstimate_CreationDate"].DataType, typeof(DateTime));
-            Assert.Equal(result.Columns["MinEstimate_Inception_DeepTest"].DataType, typeof(string));
-            Assert.Equal(result.Columns["SearchVolume"].DataType, typeof(double));
-            Assert.Equal(result.Columns["Competition"].DataType, typeof(double));
+            Assert.Equal(typeof(double), result.Columns["AverageEstimate_TotalCost"].DataType);
+            Assert.Equal(typeof(DateTime), result.Columns["AverageEstimate_CreationDate"].DataType);
+            Assert.Equal(typeof(string), result.Columns["AverageEstimate_Inception_DeepTest"].DataType);
+            Assert.Equal(typeof(double), result.Columns["MinEstimate_TotalCost"].DataType);
+            Assert.Equal(typeof(DateTime), result.Columns["MinEstimate_CreationDate"].DataType);
+            Assert.Equal(typeof(string), result.Columns["MinEstimate_Inception_DeepTest"].DataType);
+            Assert.Equal(typeof(double), result.Columns["SearchVolume"].DataType);
+            Assert.Equal(typeof(double), result.Columns["Competition"].DataType);
         }
 
         [Fact]
@@ -718,7 +718,7 @@ namespace SqlBulkTools.UnitTests
             var result = BulkOperationsHelper.BuildMatchTargetOnList(columns, null, new Dictionary<string, string>());
 
             // Assert
-            Assert.Equal(result, "WHERE [id] = @id AND [Name] = @Name AND [Town] = @Town AND [Email] = @Email AND [IsCool] = @IsCool");
+            Assert.Equal("WHERE [id] = @id AND [Name] = @Name AND [Town] = @Town AND [Email] = @Email AND [IsCool] = @IsCool", result);
         }
 
         [Fact]
@@ -731,7 +731,7 @@ namespace SqlBulkTools.UnitTests
             var result = BulkOperationsHelper.BuildMatchTargetOnList(columns, new Dictionary<string, string> { { "id", "DEFAULT_COLLATION" } }, new Dictionary<string, string>());
 
             // Assert
-            Assert.Equal(result, "WHERE [id] = @id COLLATE DEFAULT_COLLATION");
+            Assert.Equal("WHERE [id] = @id COLLATE DEFAULT_COLLATION", result);
         }
 
         private HashSet<string> GetTestColumns()

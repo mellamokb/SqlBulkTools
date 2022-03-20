@@ -22,6 +22,11 @@ namespace SqlBulkTools
             _ext = ext;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="propTypes"></param>
+        /// <returns></returns>
         public SetupDataTable<T> WithPropertyTypes(Dictionary<string, Type> propTypes)
         {
             this._propTypes = propTypes;

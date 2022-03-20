@@ -23,6 +23,7 @@ namespace SqlBulkTools.QueryOperations
         /// 
         /// </summary>
         /// <param name="singleEntity"></param>
+        /// <param name="propTypes"></param>
         /// <param name="tableName"></param>
         /// <param name="schema"></param>
         /// <param name="sqlParams"></param>

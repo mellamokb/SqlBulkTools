@@ -25,6 +25,11 @@ namespace SqlBulkTools.QueryOperations
             _sqlParams = sqlParams;
         }
 
+        /// <summary>
+        /// Supply the property types when your source is a Dictionary[string, object]
+        /// </summary>
+        /// <param name="propTypes"></param>
+        /// <returns></returns>
         public QueryForObject<T> WithPropertyTypes(Dictionary<string, Type> propTypes)
         {
             this._propTypes = propTypes;

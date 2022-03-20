@@ -18,6 +18,7 @@ namespace SqlBulkTools
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="bulk"></param>
         /// <param name="list"></param>
         public BulkForCollection(BulkOperations bulk, IEnumerable<T> list)
         {
@@ -25,6 +26,11 @@ namespace SqlBulkTools
             _list = list;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="propTypes"></param>
+        /// <returns></returns>
         public BulkForCollection<T> WithPropertyTypes(Dictionary<string, Type> propTypes)
         {
             this._propTypes = propTypes;
