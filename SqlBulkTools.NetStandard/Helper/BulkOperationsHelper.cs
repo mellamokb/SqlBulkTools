@@ -1005,16 +1005,47 @@ namespace SqlBulkTools
         {
             using (var bulkcopy = new SqlBulkCopy(conn, bulkCopySettings.SqlBulkCopyOptions, transaction))
             {
-                bulkcopy.DestinationTableName = Constants.TempTableName;
-
-                SetSqlBulkCopySettings(bulkcopy, bulkCopySettings);
-
-                foreach (var column in dt.Columns)
+                try
                 {
-                    _ = bulkcopy.ColumnMappings.Add(column.ToString(), column.ToString());
-                }
 
-                await bulkcopy.WriteToServerAsync(dt, cancellationToken).ConfigureAwait(false);
+                    bulkcopy.DestinationTableName = Constants.TempTableName;
+
+                    SetSqlBulkCopySettings(bulkcopy, bulkCopySettings);
+
+                    foreach (var column in dt.Columns)
+                    {
+                        bulkcopy.ColumnMappings.Add(column.ToString(), column.ToString());
+                    }
+
+                    bulkcopy.WriteToServer(dt);
+
+                }
+                catch (SqlException e)
+                {
+                    for (int i = 0; i < e.Errors.Count; i++)
+                    {
+                        // Error 4815 is invalid column length error.
+                        if (e.Errors[i].Number == 4815)
+                        {
+                            string pattern = @"\d+";
+                            Match match = Regex.Match(e.Message, pattern);
+                            var index = Convert.ToInt32(match.Value) - 1;
+
+                            FieldInfo fi = typeof(SqlBulkCopy).GetField("_sortedColumnMappings", BindingFlags.NonPublic | BindingFlags.Instance);
+                            if (fi is null) continue;
+                            var sortedColumns = fi.GetValue(bulkcopy);
+                            var items = (object[])sortedColumns.GetType().GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(sortedColumns);
+
+                            FieldInfo itemData = items?[index].GetType().GetField("_metadata", BindingFlags.NonPublic | BindingFlags.Instance);
+                            if (itemData == null) continue;
+                            var metadata = itemData.GetValue(items[index]);
+
+                            var column = metadata.GetType().GetField("column", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(metadata);
+                            var length = metadata.GetType().GetField("length", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(metadata);
+                            throw new SqlBulkToolsException($"Column {column} contains data with a length greater than {length}");
+                        }
+                    }
+                }
             }
         }
 
@@ -1144,7 +1175,7 @@ namespace SqlBulkTools
                 + "OUTPUT INSERTED.[" + identityColumn + "] INTO "
                 + Constants.TempOutputTableName + "([" + identityColumn + "]) "
                 + BuildSelectSet(columns, Constants.SourceAlias, identityColumn)
-                + " FROM " + Constants.TempTableName + " AS Source ORDER BY "+ Constants.InternalId + "; " +
+                + " FROM " + Constants.TempTableName + " AS Source ORDER BY " + Constants.InternalId + "; " +
                 "DROP TABLE " + Constants.TempTableName + ";";
 
             return comm;
@@ -1220,21 +1251,21 @@ namespace SqlBulkTools
                     break;
                 }
                 case ExpressionType.Equal:
-                {
-                    //leftName = ((MemberExpression)binaryBody.Left).Member.Name;
-                    value = Expression.Lambda(binaryBody.Right).Compile().DynamicInvoke()?.ToString();
-
-                    if (value != null)
                     {
-                        condition = new PredicateCondition
+                        //leftName = ((MemberExpression)binaryBody.Left).Member.Name;
+                        value = Expression.Lambda(binaryBody.Right).Compile().DynamicInvoke()?.ToString();
+
+                        if (value != null)
                         {
-                            Expression = ExpressionType.Equal,
-                            LeftName = leftName,
-                            ValueType = binaryBody.Right.Type,
-                            Value = value,
-                            PredicateType = predicateType,
-                            SortOrder = sortOrder
-                        };
+                            condition = new PredicateCondition
+                            {
+                                Expression = ExpressionType.Equal,
+                                LeftName = leftName,
+                                ValueType = binaryBody.Right.Type,
+                                Value = value,
+                                PredicateType = predicateType,
+                                SortOrder = sortOrder
+                            };
 
                         var paramName = appendParam != null ? leftName + appendParam + sortOrder : leftName;
                         _ = sqlParameters.AddSqlParameter(paramName, condition.Value, condition.ValueType);
@@ -1319,7 +1350,7 @@ namespace SqlBulkTools
                     $"Expression not supported for {GetPredicateMethodName(predicateType)}");
             }
 
-            var leftName = ((MemberExpression) binaryBody.Left).Member.Name;
+            var leftName = ((MemberExpression)binaryBody.Left).Member.Name;
 
             return leftName ?? throw new SqlBulkToolsException($"{columnType} can't be null");
         }

@@ -1609,7 +1609,7 @@ namespace SqlBulkTools.IntegrationTests
 
             for (var i = 0; i < books.Count; i++)
             {
-                books[i].WarehouseId = i > books.Count / 2 - 1 ? 1 : 2;
+                books[i].WarehouseId = i > (books.Count / 2) - 1 ? 1 : 2;
             }
 
             using (var trans = new TransactionScope())
@@ -1628,7 +1628,7 @@ namespace SqlBulkTools.IntegrationTests
 
                     for (var i = 0; i < books.Count; i++)
                     {
-                        books[i].WarehouseId = i > books.Count / 2 - 1 ? 1 : 2;
+                        books[i].WarehouseId = i > (books.Count / 2) - 1 ? 1 : 2;
                     }
 
                     // Only delete if WarehouseId is 1
@@ -1664,7 +1664,7 @@ namespace SqlBulkTools.IntegrationTests
 
             for (var i = 0; i < books.Count; i++)
             {
-                books[i].WarehouseId = i > books.Count / 2 - 1 ? 1 : 2;
+                books[i].WarehouseId = i > (books.Count / 2) - 1 ? 1 : 2;
             }
 
             using (var trans = new TransactionScope())
@@ -1849,7 +1849,7 @@ namespace SqlBulkTools.IntegrationTests
 
             for (var i = 0; i < books.Count; i++)
             {
-                books[i].WarehouseId = i > books.Count / 2 - 1 ? 1 : 2;
+                books[i].WarehouseId = i > (books.Count / 2) - 1 ? 1 : 2;
             }
 
             using (var trans = new TransactionScope())
@@ -2071,7 +2071,7 @@ namespace SqlBulkTools.IntegrationTests
 
         [Fact]
         public void SqlBulkTools_BulkInsertOrUpdate_TestDataTypes()
-        {
+        { 
             BulkDelete(_dataAccess.GetBookList());
 
             var todaysDate = DateTime.Today;
