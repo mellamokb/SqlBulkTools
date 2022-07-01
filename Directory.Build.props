@@ -4,7 +4,8 @@
 		<Product>SqlBulkTools</Product>
 		<Authors>fretje, tiagorosendo, zek99, gtaylor44</Authors>
 		<Description>SqlBulkTools features an easy to use fluent interface for performing SQL operations in c#. Supports Bulk Insert, Update, Delete and Merge. Includes advanced features such as output identity, delete entities conditionally (for merging), exclude column(s) from update (for merging), single entity operations and plenty more.
-Now also supports entities of type Dictionary&lt;string, object=""&gt; for easy importing of generic json (e.g. from odata).</Description>
+
+Now also supports entities of type Dictionary&lt;string, object&gt; for easy importing of generic json (e.g. from odata).</Description>
 
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
