@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/fretje/SqlBulkTools/master/Images/icon-large.png" alt="SqlBulkTools">  ![Build Status](https://github.com/fretje/SqlBulkTools/actions/workflows/build.yml/badge.svg)
+![SqlBulkTools](https://raw.githubusercontent.com/fretje/SqlBulkTools/master/Images/icon-large.png) ![Build Status](https://github.com/fretje/SqlBulkTools/actions/workflows/build.yml/badge.svg)
 
 SqlBulkTools features an easy to use fluent interface for performing SQL operations in c#. Supports Bulk Insert, Update, Delete and Merge. Includes advanced features such as output identity, delete entities conditionally (for merging), exclude column(s) from update (for merging), single entity operations and plenty more.
 
@@ -646,7 +646,7 @@ when you wont to fire triggers and check constraint then proper SqlBulkCopyOptio
 ```
 
 ### How does SqlBulkTools compare to others? 
-<img src="http://gregnz.com/images/SqlBulkTools/performance_comparison.png" alt="Performance Comparison">
+![Performance Comparison](http://gregnz.com/images/SqlBulkTools/performance_comparison.png)
 
 <b>Test notes:</b>
 - Table had 6 columns including an identity column. <br/> 
