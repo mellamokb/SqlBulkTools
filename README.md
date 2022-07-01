@@ -10,7 +10,7 @@ Please leave a Github star if you find this project useful.
 
 #### Getting started
 
-```dotnet add package fretje.SqlBulkTools --version 0.0.6```
+```dotnet add package fretje.SqlBulkTools```
 
 -----------------------------
 ```c#
@@ -644,11 +644,3 @@ when you wont to fire triggers and check constraint then proper SqlBulkCopyOptio
     })
 
 ```
-
-### How does SqlBulkTools compare to others? 
-![Performance Comparison](http://gregnz.com/images/SqlBulkTools/performance_comparison.png)
-
-<b>Test notes:</b>
-- Table had 6 columns including an identity column. <br/> 
-- There were 3 non-clustered indexes on the table. <br/>
-- SqlBulkTools used the following setup options: AddAllColumns, TmpDisableAllNonClusteredIndexes. <br/>
