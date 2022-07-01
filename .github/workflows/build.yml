@@ -31,5 +31,5 @@ jobs:
         $version = (Select-Xml -Path ./Directory.Build.props -XPath /Project/PropertyGroup/Version).Node.InnerText
         $versions = (Invoke-WebRequest https://api.nuget.org/v3-flatcontainer/fretje.SqlBulkTools/index.json -UseBasicParsing | ConvertFrom-Json).versions
         if (-not($versions -contains $version)) {
-          dotnet nuget push ./*.nupkg -k $env:NUGET_AUTH_TOKEN
+          dotnet nuget push ./*.nupkg -k $env:NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
         }
