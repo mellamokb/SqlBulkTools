@@ -1,0 +1,35 @@
+<Project>
+
+	<PropertyGroup>
+		<Product>SqlBulkTools</Product>
+		<Authors>fretje, tiagorosendo, zek99, gtaylor44</Authors>
+		<Description>SqlBulkTools features an easy to use fluent interface for performing SQL operations in c#. Supports Bulk Insert, Update, Delete and Merge. Includes advanced features such as output identity, delete entities conditionally (for merging), exclude column(s) from update (for merging), single entity operations and plenty more.
+Now also supports entities of type Dictionary&lt;string, object=""&gt; for easy importing of generic json (e.g. from odata).</Description>
+
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+
+		<Version>0.0.5</Version>
+
+		<PackageIcon>icon-large.png</PackageIcon>
+		<PackageIconUrl>https://github.com/fretje/SqlBulkTools/blob/master/Images/icon-large.png?raw=true</PackageIconUrl>
+		<PackageProjectUrl>https://github.com/fretje/SqlBulkTools</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageTags>SQL BULK BULKINSERT BULKUPDATE</PackageTags>
+
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../Images/icon-large.png" Pack="true" PackagePath="\" Visible="false" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+	</ItemGroup>
+	
+</Project>

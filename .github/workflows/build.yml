@@ -1,15 +1,34 @@
 on:
   push:
-  pull_request:
+    branches: 
+    - master
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     timeout-minutes: 15
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
     - name: Build
       run: dotnet build --configuration Release
+
     - name: Test
       run: dotnet test SqlBulkTools.NetStandard.UnitTests --configuration Release --no-build
+
+    - name: Pack
+      run: dotnet pack --configuration Release --no-build --output .
+
+    - name: Publish the package to nuget.org when we have a new version
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
+      run: |
+        $version = (Select-Xml -Path .\Directory.Build.props -XPath /Project/PropertyGroup/Version).Node.InnerText
+        $versions = (Invoke-WebRequest https://api.nuget.org/v3-flatcontainer/fretje.SqlBulkTools/index.json -UseBasicParsing | ConvertFrom-Json).versions
+        if (-not($versions -contains $version)) {
+          dotnet nuget push .\*.nupkg -k $env:NUGET_AUTH_TOKEN
+        }

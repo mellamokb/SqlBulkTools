@@ -1,6 +1,8 @@
-<img src="http://gregnz.com/images/SqlBulkTools/icon-large.png" alt="SqlBulkTools">  [![Build Status](https://travis-ci.org/tiagorosendo/SqlBulkTools.svg?branch=master)](https://travis-ci.org/tiagorosendo/SqlBulkTools)
+<img src="http://gregnz.com/images/SqlBulkTools/icon-large.png" alt="SqlBulkTools">  ![Build Status](https://github.com/fretje/SqlBulkTools/actions/workflows/build.yml/badge.svg)
 
-SqlBulkTools features an easy to use fluent interface for performing SQL operations in c#. Supports Bulk Insert, Update, Delete and Merge. Includes advanced features such as output identity, delete entities conditionally (for merging), exclude column(s) from update (for merging), single entity operations and plenty more. 
+SqlBulkTools features an easy to use fluent interface for performing SQL operations in c#. Supports Bulk Insert, Update, Delete and Merge. Includes advanced features such as output identity, delete entities conditionally (for merging), exclude column(s) from update (for merging), single entity operations and plenty more.
+
+Now also supports entities of type Dictionary<string, object> for easy importing of generic json (e.g. from odata).
 
 Please leave a Github star if you find this project useful.
 
@@ -8,7 +10,7 @@ Please leave a Github star if you find this project useful.
 
 #### Getting started
 
-```dotnet add package SqlBulkTools.NetStandard --version 2.1.13```
+```dotnet add package fretje.SqlBulkTools --version 0.0.6```
 
 -----------------------------
 ```c#
