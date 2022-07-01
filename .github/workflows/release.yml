@@ -18,4 +18,6 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release /p:Version=${VERSION} /p:PackageId=fretje.SqlBulkTools --no-build --output .
     - name: Push
-      run: dotnet nuget push fretje.SqlBulkTools.${VERSION}.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_AUTH_TOKEN }}
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
+      run: dotnet nuget push fretje.SqlBulkTools.${VERSION}.nupkg -s https://api.nuget.org/v3/index.json -k $env:NUGET_AUTH_TOKEN
