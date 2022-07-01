@@ -12,12 +12,13 @@ Now also supports entities of type Dictionary&lt;string, object=""&gt; for easy 
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 
-		<Version>0.0.6</Version>
+		<Version>0.0.7</Version>
 
 		<PackageIcon>icon-large.png</PackageIcon>
 		<PackageIconUrl>https://github.com/fretje/SqlBulkTools/blob/master/Images/icon-large.png?raw=true</PackageIconUrl>
 		<PackageProjectUrl>https://github.com/fretje/SqlBulkTools</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>SQL BULK BULKINSERT BULKUPDATE</PackageTags>
 
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -26,6 +27,7 @@ Now also supports entities of type Dictionary&lt;string, object=""&gt; for easy 
 
 	<ItemGroup>
 		<None Include="../Images/icon-large.png" Pack="true" PackagePath="\" Visible="false" />
+		<None Include="../README.md" Pack="true" PackagePath="\" Visible="false" />
 	</ItemGroup>
 
 	<ItemGroup>
