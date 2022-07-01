@@ -12,7 +12,7 @@ Now also supports entities of type Dictionary&lt;string, object=""&gt; for easy 
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 
-		<Version>0.0.8</Version>
+		<Version>0.0.9</Version>
 
 		<PackageIcon>icon-large.png</PackageIcon>
 		<PackageIconUrl>https://github.com/fretje/SqlBulkTools/blob/master/Images/icon-large.png?raw=true</PackageIconUrl>
