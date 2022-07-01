@@ -301,11 +301,6 @@ namespace SqlBulkTools
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (transaction is null)
-            {
-                throw new ArgumentNullException(nameof(transaction));
-            }
-
             int affectedRecords = 0;
             if (!_list.Any())
             {
