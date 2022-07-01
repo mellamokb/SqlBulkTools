@@ -24,6 +24,7 @@ jobs:
       run: dotnet pack --configuration Release --no-build --output .
 
     - name: Publish the package to nuget.org when we have a new version
+      shell: pwsh
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
       run: |
