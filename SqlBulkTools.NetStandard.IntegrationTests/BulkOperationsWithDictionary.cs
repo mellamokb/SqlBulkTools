@@ -1,17 +1,17 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Transactions;
+using AutoFixture;
+using Microsoft.Data.SqlClient;
 using Microsoft.SqlServer.Types;
 using SqlBulkTools.Enumeration;
 using SqlBulkTools.IntegrationTests.Data;
 using SqlBulkTools.TestCommon;
 using SqlBulkTools.TestCommon.Model;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Transactions;
 using Xunit;
 
 namespace SqlBulkTools.IntegrationTests

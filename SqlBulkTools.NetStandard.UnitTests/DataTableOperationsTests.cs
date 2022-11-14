@@ -175,7 +175,7 @@ namespace SqlBulkTools.UnitTests
 
             dt = dtOps.BuildPreparedDataDable();
 
-            Assert.Equal(dt.Columns[dtOps.GetColumn<Book>(x => x.Id)].AutoIncrementSeed, autoIncrementSeedTest);
+            Assert.Equal(autoIncrementSeedTest, dt.Columns[dtOps.GetColumn<Book>(x => x.Id)].AutoIncrementSeed);
 
         }
     }
