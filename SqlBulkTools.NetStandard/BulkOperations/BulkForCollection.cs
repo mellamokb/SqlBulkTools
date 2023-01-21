@@ -33,7 +33,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public BulkForCollection<T> WithPropertyTypes(Dictionary<string, Type> propTypes)
         {
-            this._propTypes = propTypes;
+            _propTypes = propTypes;
             return this;
         }
 

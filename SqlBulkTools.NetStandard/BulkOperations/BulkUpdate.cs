@@ -120,7 +120,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public BulkUpdate<T> SetIdentityColumn(string columnName)
         {
-            base.SetIdentity(columnName);
+            SetIdentity(columnName);
             return this;
         }
 
@@ -132,7 +132,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public BulkUpdate<T> SetIdentityColumn(Expression<Func<T, object>> columnName)
         {
-            base.SetIdentity(columnName);
+            SetIdentity(columnName);
             return this;
         }
 
@@ -145,7 +145,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public BulkUpdate<T> SetIdentityColumn(string columnName, ColumnDirectionType outputIdentity)
         {
-            base.SetIdentity(columnName, outputIdentity);
+            SetIdentity(columnName, outputIdentity);
             return this;
         }
 
@@ -158,7 +158,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public BulkUpdate<T> SetIdentityColumn(Expression<Func<T, object>> columnName, ColumnDirectionType outputIdentity)
         {
-            base.SetIdentity(columnName, outputIdentity);
+            SetIdentity(columnName, outputIdentity);
             return this;
         }
 
@@ -222,7 +222,7 @@ namespace SqlBulkTools
                 return affectedRows;
             }
 
-            base.MatchTargetCheck();
+            MatchTargetCheck();
 
             DataTable dt = BulkOperationsHelper.CreateDataTable<T>(_propertyInfoList, _columns, _customColumnMappings, _ordinalDic, _matchTargetOn, _outputIdentity);
             dt = BulkOperationsHelper.ConvertListToDataTable(_propertyInfoList, dt, _list, _columns, _ordinalDic, _outputIdentityDic);
@@ -311,7 +311,7 @@ namespace SqlBulkTools
                 return affectedRows;
             }
 
-            base.MatchTargetCheck();
+            MatchTargetCheck();
 
             DataTable dt = BulkOperationsHelper.CreateDataTable<T>(_propertyInfoList, _columns, _customColumnMappings, _ordinalDic, _matchTargetOn, _outputIdentity);
             dt = BulkOperationsHelper.ConvertListToDataTable(_propertyInfoList, dt, _list, _columns, _ordinalDic, _outputIdentityDic);
@@ -383,20 +383,16 @@ namespace SqlBulkTools
             }
         }
 
-        private string GetCommand(SqlConnection connection)
-        {
-            string comm = "MERGE INTO " + BulkOperationsHelper.GetFullQualifyingTableName(connection.Database, _schema, _tableName) + $" WITH ({_tableHint}) AS Target " +
-                              "USING " + Constants.TempTableName + " AS Source " +
-                              BulkOperationsHelper.BuildJoinConditionsForInsertOrUpdate(_matchTargetOn.ToArray(),
-                                  Constants.SourceAlias, Constants.TargetAlias, base._collationColumnDic, _nullableColumnDic) +
-                              "WHEN MATCHED " + BulkOperationsHelper.BuildPredicateQuery(_matchTargetOn.ToArray(), _updatePredicates, Constants.TargetAlias, base._collationColumnDic) +
-                              "THEN UPDATE " +
-                              BulkOperationsHelper.BuildUpdateSet(_columns, Constants.SourceAlias, Constants.TargetAlias, _identityColumn) +
-                              BulkOperationsHelper.GetOutputIdentityCmd(_identityColumn, _outputIdentity, Constants.TempOutputTableName,
-                              OperationType.Update) + "; " +
-                              "DROP TABLE " + Constants.TempTableName + ";";
-
-            return comm;
-        }
+        private string GetCommand(SqlConnection connection) =>
+            "MERGE INTO " + BulkOperationsHelper.GetFullQualifyingTableName(connection.Database, _schema, _tableName) + $" WITH ({_tableHint}) AS Target " +
+            "USING " + Constants.TempTableName + " AS Source " +
+            BulkOperationsHelper.BuildJoinConditionsForInsertOrUpdate(_matchTargetOn.ToArray(),
+                Constants.SourceAlias, Constants.TargetAlias, _collationColumnDic, _nullableColumnDic) +
+            "WHEN MATCHED " + BulkOperationsHelper.BuildPredicateQuery(_matchTargetOn.ToArray(), _updatePredicates, Constants.TargetAlias, _collationColumnDic) +
+            "THEN UPDATE " +
+            BulkOperationsHelper.BuildUpdateSet(_columns, Constants.SourceAlias, Constants.TargetAlias, _identityColumn) +
+            BulkOperationsHelper.GetOutputIdentityCmd(_identityColumn, _outputIdentity, Constants.TempOutputTableName,
+            OperationType.Update) + "; " +
+            "DROP TABLE " + Constants.TempTableName + ";";
     }
 }

@@ -17,7 +17,6 @@ namespace SqlBulkTools
         private IDataTableTransaction _dataTableTransaction;
         private Type _expectedType;
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -53,7 +52,7 @@ namespace SqlBulkTools
         /// <returns>Populated DataTable</returns>
         public DataTable BuildPreparedDataDable()
         {
-            this.CheckSetup();
+            CheckSetup();
 
             return _dataTableTransaction.BuildDataTable();
         }
@@ -69,19 +68,18 @@ namespace SqlBulkTools
         public string GetColumn<T>(Expression<Func<T, object>> columnName)
         {
 
-            this.CheckType(typeof(T));
-            this.CheckSetup();          
+            CheckType(typeof(T));
+            CheckSetup();          
             var propertyName = BulkOperationsHelper.GetPropertyName(columnName);
 
-            this.CheckRemovedColumns(propertyName);
+            CheckRemovedColumns(propertyName);
 
             if (_customColumnMappings != null)
             {
-                string customColumn;
 
-                if (_customColumnMappings.TryGetValue(propertyName, out customColumn))
+                if (_customColumnMappings.TryGetValue(propertyName, out string customColumn))
                     return customColumn;
-                
+
             }
 
             if (_columns.Contains(propertyName))
@@ -113,7 +111,5 @@ namespace SqlBulkTools
             if (_removedColumns != null && _removedColumns.Contains(propertyName))
                 throw new SqlBulkToolsException("The property \'" + propertyName + "\' has already been explicitly removed.");
         }
-
-
     }
 }

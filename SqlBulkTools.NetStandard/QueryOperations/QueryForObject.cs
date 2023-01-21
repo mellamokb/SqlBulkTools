@@ -32,7 +32,7 @@ namespace SqlBulkTools.QueryOperations
         /// <returns></returns>
         public QueryForObject<T> WithPropertyTypes(Dictionary<string, Type> propTypes)
         {
-            this._propTypes = propTypes;
+            _propTypes = propTypes;
             return this;
         }
 

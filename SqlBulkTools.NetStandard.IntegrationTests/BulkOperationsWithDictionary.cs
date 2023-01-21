@@ -38,8 +38,8 @@ namespace SqlBulkTools.IntegrationTests
     public class BulkOperationsWithDictionary
     {
         private const int _repeatTimes = 1;
-        private readonly DataAccess _dataAccess = new DataAccess();
-        private readonly BookRandomizer _randomizer = new BookRandomizer();
+        private readonly DataAccess _dataAccess = new();
+        private readonly BookRandomizer _randomizer = new();
         private List<Book> _bookCollection;
 
         [Fact]
@@ -167,7 +167,6 @@ namespace SqlBulkTools.IntegrationTests
                 results.Add(time);
 
                 Assert.Equal(rows + newRows, _dataAccess.GetBookCount());
-
             }
 
             var avg = results.Average(l => l);
@@ -203,12 +202,10 @@ namespace SqlBulkTools.IntegrationTests
                 // Add new rows
                 _bookCollection.AddRange(_randomizer.GetRandomCollection(newRows));
 
-
                 var time = BulkInsertOrUpdateAllColumns(_bookCollection);
                 results.Add(time);
 
                 Assert.Equal(rows + newRows, _dataAccess.GetBookCount());
-
             }
 
             var avg = results.Average(l => l);
@@ -233,7 +230,6 @@ namespace SqlBulkTools.IntegrationTests
 
             for (var i = 0; i < _repeatTimes; i++)
             {
-
                 _bookCollection = _randomizer.GetRandomCollection(rows);
                 BulkInsert(_bookCollection);
 
@@ -244,7 +240,6 @@ namespace SqlBulkTools.IntegrationTests
                     var prevIsbn = _bookCollection[j].ISBN;
                     _bookCollection[j] = newBook;
                     _bookCollection[j].ISBN = prevIsbn;
-
                 }
 
                 var time = BulkUpdate(_bookCollection);
@@ -339,7 +334,6 @@ namespace SqlBulkTools.IntegrationTests
             }
             var avg = results.Average(l => l);
             Trace.WriteLine("Average result (" + _repeatTimes + " iterations): " + avg.ToString("#.##") + " ms\n\n");
-
         }
 
         [Fact]
@@ -395,6 +389,7 @@ namespace SqlBulkTools.IntegrationTests
 
                 trans.Complete();
             }
+
             // Assert
             Assert.Equal(testDesc, _dataAccess.GetBookList().First().Description);
         }
@@ -552,7 +547,6 @@ namespace SqlBulkTools.IntegrationTests
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
                 {
-
                     bulk.Setup()
                         .ForCollection(col.ToDictionaryList())
                         .WithPropertyTypes(typeof(SchemaTest1).ToPropertyTypes())
@@ -1446,8 +1440,8 @@ namespace SqlBulkTools.IntegrationTests
             var bulk = new BulkOperations();
             var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope(
-                                TransactionScopeOption.RequiresNew,
-                                new TimeSpan(0, 5, 0)))
+                TransactionScopeOption.RequiresNew,
+                new TimeSpan(0, 5, 0)))
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
                 {
@@ -1507,7 +1501,6 @@ namespace SqlBulkTools.IntegrationTests
         private long BulkInsertOrUpdateAllColumns(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-
             var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope())
             {
@@ -1564,7 +1557,6 @@ namespace SqlBulkTools.IntegrationTests
         private long BulkDelete(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-
             var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope())
             {

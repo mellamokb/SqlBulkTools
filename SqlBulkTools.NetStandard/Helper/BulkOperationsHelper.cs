@@ -105,7 +105,7 @@ namespace SqlBulkTools
 
             var command = new StringBuilder();
 
-            _ = command.Append($"CREATE TABLE {Constants.TempTableName}(");
+            command.Append($"CREATE TABLE {Constants.TempTableName}(");
 
             var paramList = new List<string>();
 
@@ -128,14 +128,14 @@ namespace SqlBulkTools
 
             var paramListConcatenated = string.Join(", ", paramList);
 
-            _ = command.Append(paramListConcatenated);
+            command.Append(paramListConcatenated);
 
             if (outputIdentity == ColumnDirectionType.InputOutput)
             {
-                _ = command.Append($", [{Constants.InternalId}] int");
+                command.Append($", [{Constants.InternalId}] int");
             }
 
-            _ = command.Append(");");
+            command.Append(");");
 
             return command.ToString();
         }
@@ -208,14 +208,14 @@ namespace SqlBulkTools
         {
             var command = new StringBuilder();
 
-            _ = command.Append(
+            command.Append(
                 $"ON ([{targetAlias}].[{updateOn[0]}] = [{sourceAlias}].[{updateOn[0]}]{GetCollation(collationDic, updateOn[0])}{BuildNullCondition(updateOn[0], sourceAlias, targetAlias, nullableColumnDic)}) ");
 
             if (updateOn.Length > 1)
             {
                 for (var i = 1; i < updateOn.Length; i++)
                 {
-                    _ = command.Append(
+                    command.Append(
                         $"AND ([{targetAlias}].[{updateOn[i]}] = [{sourceAlias}].[{updateOn[i]}]{GetCollation(collationDic, updateOn[i])}{BuildNullCondition(updateOn[i], sourceAlias, targetAlias, nullableColumnDic)}) ");
                 }
             }
@@ -241,10 +241,10 @@ namespace SqlBulkTools
 
             var whereClauseColumn = GetActualColumn(customColumnMappings, matchTargetOnColumns.ElementAt(0));
 
-            _ = sb.Append(
+            sb.Append(
                 $"WHERE [{whereClauseColumn}] = @{whereClauseColumn}{GetCollation(collationDic, whereClauseColumn)}");
 
-            if (matchTargetOnColumns.Count() > 1)
+            if (matchTargetOnColumns.Count > 1)
             {
                 foreach (var column in matchTargetOnColumns)
                 {
@@ -253,7 +253,7 @@ namespace SqlBulkTools
                         continue;
                     }
                     var andClauseColumn = GetActualColumn(customColumnMappings, column);
-                    _ = sb.Append(
+                    sb.Append(
                         $" AND [{andClauseColumn}] = @{andClauseColumn}{GetCollation(collationDic, andClauseColumn)}");
                 }
             }
@@ -280,7 +280,7 @@ namespace SqlBulkTools
             {
                 var targetColumn = condition.CustomColumnMapping ?? condition.LeftName;
 
-                _ = command.Append(
+                command.Append(
                     $"AND [{targetAlias}].[{targetColumn}] {GetOperator(condition)} {(condition.Value != "NULL" ? "@" + condition.LeftName + Constants.UniqueParamIdentifier + condition.SortOrder + GetCollation(collationDic, condition.LeftName) : "NULL")} ");
             }
 
@@ -313,17 +313,17 @@ namespace SqlBulkTools
                 {
                     case PredicateType.Where:
                     {
-                        _ = command.Append(" WHERE ");
+                        command.Append(" WHERE ");
                         break;
                     }
                     case PredicateType.And:
                     {
-                        _ = command.Append(" AND ");
+                        command.Append(" AND ");
                         break;
                     }
                     case PredicateType.Or:
                     {
-                        _ = command.Append(" OR ");
+                        command.Append(" OR ");
                         break;
                     }
                     default:
@@ -332,7 +332,7 @@ namespace SqlBulkTools
                     }
                 }
 
-                _ = command.Append(
+                command.Append(
                     $"[{targetColumn}] {GetOperator(condition)} {(condition.Value != "NULL" ? "@" + condition.LeftName + Constants.UniqueParamIdentifier + condition.SortOrder + GetCollation(collationDic, condition.LeftName) : "NULL")}");
             }
 
@@ -393,7 +393,7 @@ namespace SqlBulkTools
                 excludeFromUpdate = new HashSet<string>();
             }
 
-            _ = command.Append("SET ");
+            command.Append("SET ");
 
             foreach (var column in columns.ToList().OrderBy(x => x))
             {
@@ -406,7 +406,7 @@ namespace SqlBulkTools
                 }
             }
 
-            _ = command.Append(string.Join(", ", paramsSeparated) + " ");
+            command.Append(string.Join(", ", paramsSeparated) + " ");
 
             return command.ToString();
         }
@@ -430,7 +430,7 @@ namespace SqlBulkTools
                 excludeFromUpdate = new HashSet<string>();
             }
 
-            _ = command.Append("SET ");
+            command.Append("SET ");
 
             foreach (var column in columns.ToList().OrderBy(x => x))
             {
@@ -440,7 +440,7 @@ namespace SqlBulkTools
                 }
             }
 
-            _ = command.Append(string.Join(", ", paramsSeparated));
+            command.Append(string.Join(", ", paramsSeparated));
 
             return command.ToString();
         }
@@ -451,7 +451,7 @@ namespace SqlBulkTools
             var insertColumns = new List<string>();
             var values = new List<string>();
 
-            _ = command.Append("INSERT (");
+            command.Append("INSERT (");
 
             foreach (var column in columns.ToList().OrderBy(x => x))
             {
@@ -462,7 +462,7 @@ namespace SqlBulkTools
                 }
             }
 
-            _ = command.Append($"{string.Join(", ", insertColumns)}) values ({string.Join(", ", values)})");
+            command.Append($"{string.Join(", ", insertColumns)}) values ({string.Join(", ", values)})");
 
             return command.ToString();
         }
@@ -473,7 +473,7 @@ namespace SqlBulkTools
             var command = new StringBuilder();
             var insertColumns = new List<string>();
 
-            _ = command.Append($"INSERT INTO {fullQualifiedTableName} (");
+            command.Append($"INSERT INTO {fullQualifiedTableName} (");
 
             foreach (var column in columns.OrderBy(x => x))
             {
@@ -483,7 +483,7 @@ namespace SqlBulkTools
                 }
             }
 
-            _ = command.Append($"{string.Join(", ", insertColumns)}) ");
+            command.Append($"{string.Join(", ", insertColumns)}) ");
 
             return command.ToString();
         }
@@ -493,7 +493,7 @@ namespace SqlBulkTools
             var command = new StringBuilder();
             var valueList = new List<string>();
 
-            _ = command.Append("(");
+            command.Append('(');
             foreach (var column in columns.OrderBy(x => x))
             {
                 if (column != identityColumn)
@@ -502,8 +502,8 @@ namespace SqlBulkTools
                 }
             }
 
-            _ = command.Append(string.Join(", ", valueList));
-            _ = command.Append(")");
+            command.Append(string.Join(", ", valueList));
+            command.Append(')');
 
             return command.ToString();
         }
@@ -513,7 +513,7 @@ namespace SqlBulkTools
             var command = new StringBuilder();
             var selectColumns = new List<string>();
 
-            _ = command.Append("SELECT ");
+            command.Append("SELECT ");
 
             foreach (var column in columns.ToList().OrderBy(x => x))
             {
@@ -526,7 +526,7 @@ namespace SqlBulkTools
                 }
             }
 
-            _ = command.Append(string.Join(", ", selectColumns));
+            command.Append(string.Join(", ", selectColumns));
 
             return command.ToString();
         }
@@ -589,7 +589,7 @@ namespace SqlBulkTools
 
             if (outputIdentityCol)
             {
-                _ = columns.Add(Constants.InternalId);
+                columns.Add(Constants.InternalId);
             }
 
             foreach (var property in propertyInfoList)
@@ -626,9 +626,9 @@ namespace SqlBulkTools
                 var type = Nullable.GetUnderlyingType(property.PropertyType) ??
                            property.PropertyType;
 
-                if (columnMappings != null && columnMappings.ContainsKey(propertyName))
+                if (columnMappings != null && columnMappings.TryGetValue(propertyName, out string value))
                 {
-                    var ordinal = dataTable.Columns.Add(columnMappings[propertyName], type).Ordinal;
+                    var ordinal = dataTable.Columns.Add(value, type).Ordinal;
                     ordinalDic.Add(propertyName, ordinal);
                 }
                 else if (columns.Contains(propertyName))
@@ -665,7 +665,7 @@ namespace SqlBulkTools
                 }
 
                 internalIdCounter++;
-                _ = dataTable.Rows.Add(values);
+                dataTable.Rows.Add(values);
             }
 
             return dataTable;
@@ -683,7 +683,7 @@ namespace SqlBulkTools
             if (propertyInfoList.SingleOrDefault(p => p.GetName(basePropertyName) == columnName) is PropInfo foundProperty)
             {
                 // CheckForValidDataType will throw if not valid, so not interested in the return value.
-                _ = CheckForValidDataType(foundProperty.PropertyType, true);
+                CheckForValidDataType(foundProperty.PropertyType, true);
                 value = foundProperty.GetValue(entity);
                 type = foundProperty.PropertyType;
                 return true;
@@ -776,7 +776,7 @@ namespace SqlBulkTools
             {
                 if (!columns.Contains(col))
                 {
-                    _ = columns.Add(col);
+                    columns.Add(col);
                 }
             }
             return columns;
@@ -794,8 +794,8 @@ namespace SqlBulkTools
             {
                 if (columns.Contains(column.Key))
                 {
-                    _ = columns.Remove(column.Key);
-                    _ = columns.Add(column.Value);
+                    columns.Remove(column.Key);
+                    columns.Add(column.Value);
                 }
 
                 for (var i = 0; i < updateOnList.ToArray().Length; i++)
@@ -819,8 +819,8 @@ namespace SqlBulkTools
             {
                 if (columns.Contains(column.Key))
                 {
-                    _ = columns.Remove(column.Key);
-                    _ = columns.Add(column.Value);
+                    columns.Remove(column.Key);
+                    columns.Add(column.Value);
                 }
             }
         }
@@ -869,7 +869,7 @@ namespace SqlBulkTools
             foreach (var column in columns.ToList().OrderBy(x => x))
             {
                 var actualColumn = GetActualColumn(customColumnMappings, column);
-                _ = bulkCopy.ColumnMappings.Add(actualColumn, actualColumn);
+                bulkCopy.ColumnMappings.Add(actualColumn, actualColumn);
             }
         }
 
@@ -903,7 +903,7 @@ namespace SqlBulkTools
             }
             else if (CheckForValidDataType(property.PropertyType))
             {
-                _ = columns.Add(property.GetName(basePropertyName));
+                columns.Add(property.GetName(basePropertyName));
             }
         }
 
@@ -920,15 +920,15 @@ namespace SqlBulkTools
             switch (operation)
             {
                 case OperationType.Insert:
-                    _ = sb.Append($"OUTPUT inserted.{identityColumn} INTO {tmpTableName}({identityColumn}); ");
+                    sb.Append($"OUTPUT inserted.{identityColumn} INTO {tmpTableName}({identityColumn}); ");
                     break;
                 case OperationType.InsertOrUpdate:
                 case OperationType.Update:
-                    _ = sb.Append(
+                    sb.Append(
                         $"OUTPUT Source.{Constants.InternalId}, inserted.{identityColumn} INTO {tmpTableName}({Constants.InternalId}, {identityColumn}); ");
                     break;
                 case OperationType.Delete:
-                    _ = sb.Append(
+                    sb.Append(
                         $"OUTPUT Source.{Constants.InternalId}, deleted.{identityColumn} INTO {tmpTableName}({Constants.InternalId}, {identityColumn}); ");
                     break;
                 default:
@@ -994,7 +994,7 @@ namespace SqlBulkTools
 
                 foreach (var column in dt.Columns)
                 {
-                    _ = bulkcopy.ColumnMappings.Add(column.ToString(), column.ToString());
+                    bulkcopy.ColumnMappings.Add(column.ToString(), column.ToString());
                 }
 
                 bulkcopy.WriteToServer(dt);
@@ -1079,7 +1079,7 @@ namespace SqlBulkTools
                     }
 
                     command.CommandText = GetDropTmpTableCmd();
-                    _ = command.ExecuteNonQuery();
+                    command.ExecuteNonQuery();
                     break;
 
                 case OperationType.Insert:
@@ -1099,7 +1099,7 @@ namespace SqlBulkTools
                     }
 
                     command.CommandText = GetDropTmpTableCmd();
-                    _ = command.ExecuteNonQuery();
+                    command.ExecuteNonQuery();
                     break;
             }
         }
@@ -1124,7 +1124,7 @@ namespace SqlBulkTools
 
                     using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
                     {
-                        while (await reader.ReadAsync().ConfigureAwait(false))
+                        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
                         {
                             if (outputIdentityDic.TryGetValue(reader.GetInt32(0), out var item))
                             {
@@ -1134,7 +1134,7 @@ namespace SqlBulkTools
                     }
 
                     command.CommandText = GetDropTmpTableCmd();
-                    _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                    await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                     break;
 
                 case OperationType.Insert:
@@ -1146,7 +1146,7 @@ namespace SqlBulkTools
                         var items = list.ToList();
                         var counter = 0;
 
-                        while (await reader.ReadAsync().ConfigureAwait(false))
+                        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
                         {
                             identityProperty.SetValue(items[counter], reader.GetInt32(0));
                             counter++;
@@ -1154,7 +1154,7 @@ namespace SqlBulkTools
                     }
 
                     command.CommandText = GetDropTmpTableCmd();
-                    _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                    await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                     break;
             }
         }
@@ -1225,7 +1225,7 @@ namespace SqlBulkTools
                         };
 
                         var paramName = appendParam != null ? leftName + appendParam + sortOrder : leftName;
-                        _ = sqlParameters.AddSqlParameter(paramName, condition.Value, condition.ValueType);
+                        sqlParameters.AddSqlParameter(paramName, condition.Value, condition.ValueType);
                     }
                     else
                     {
@@ -1260,7 +1260,7 @@ namespace SqlBulkTools
                             };
 
                         var paramName = appendParam != null ? leftName + appendParam + sortOrder : leftName;
-                        _ = sqlParameters.AddSqlParameter(paramName, condition.Value, condition.ValueType);
+                        sqlParameters.AddSqlParameter(paramName, condition.Value, condition.ValueType);
                     }
                     else
                     {
@@ -1373,7 +1373,7 @@ namespace SqlBulkTools
             predicateList.Add(condition);
 
             var paramName = appendParam != null ? leftName + appendParam + sortOrder : leftName;
-            _ = sqlParameters.AddSqlParameter(paramName, condition.Value, condition.ValueType);
+            sqlParameters.AddSqlParameter(paramName, condition.Value, condition.ValueType);
         }
 
         internal struct PrecisionType

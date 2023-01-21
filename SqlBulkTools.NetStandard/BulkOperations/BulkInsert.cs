@@ -42,7 +42,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public BulkInsert<T> SetIdentityColumn(string columnName)
         {
-            base.SetIdentity(columnName);
+            SetIdentity(columnName);
             return this;
         }
 
@@ -54,7 +54,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public BulkInsert<T> SetIdentityColumn(Expression<Func<T, object>> columnName)
         {
-            base.SetIdentity(columnName);
+            SetIdentity(columnName);
             return this;
         }
 
@@ -67,7 +67,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public BulkInsert<T> SetIdentityColumn(string columnName, ColumnDirectionType outputIdentity)
         {
-            base.SetIdentity(columnName, outputIdentity);
+            SetIdentity(columnName, outputIdentity);
             return this;
         }
 
@@ -80,7 +80,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public BulkInsert<T> SetIdentityColumn(Expression<Func<T, object>> columnName, ColumnDirectionType outputIdentity)
         {
-            base.SetIdentity(columnName, outputIdentity);
+            SetIdentity(columnName, outputIdentity);
             return this;
         }
 
@@ -135,7 +135,7 @@ namespace SqlBulkTools
         /// <returns></returns>
         public BulkInsert<T> WithTimeout(int timeout)
         {
-            this._sqlTimeout = timeout;
+            _sqlTimeout = timeout;
             return this;
         }
 

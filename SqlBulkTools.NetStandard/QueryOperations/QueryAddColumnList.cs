@@ -14,9 +14,9 @@ namespace SqlBulkTools.QueryOperations
         private readonly T _singleEntity;
         private readonly string _tableName;
         private Dictionary<string, string> CustomColumnMappings { get; }
-        private HashSet<string> _columns;
+        private readonly HashSet<string> _columns;
         private readonly string _schema;
-        private List<SqlParameter> _sqlParams;
+        private readonly List<SqlParameter> _sqlParams;
         private readonly List<PropInfo> _propertyInfoList;
 
         /// <summary>

@@ -12,8 +12,8 @@ namespace SqlBulkTools
     /// <typeparam name="T"></typeparam>
     public class DataTableSingularColumnSelect<T> : DataTableAbstractColumnSelect<T>, IDataTableTransaction
     {
-        private Dictionary<string, int> _ordinalDic;
-        private List<PropInfo> _propertyInfoList;
+        private readonly Dictionary<string, int> _ordinalDic;
+        private readonly List<PropInfo> _propertyInfoList;
 
         /// <summary>
         /// 
@@ -70,6 +70,5 @@ namespace SqlBulkTools
         {
             return BulkOperationsHelper.ConvertListToDataTable(_propertyInfoList, _dt, _list, _columns, _ordinalDic);
         }
-
     }
 }

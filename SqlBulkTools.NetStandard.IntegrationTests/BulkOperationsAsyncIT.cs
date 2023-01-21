@@ -19,8 +19,8 @@ namespace SqlBulkTools.IntegrationTests
     {
         private const int _repeatTimes = 1;
 
-        private readonly BookRandomizer _randomizer = new BookRandomizer();
-        private readonly DataAccess _dataAccess = new DataAccess();
+        private readonly BookRandomizer _randomizer = new();
+        private readonly DataAccess _dataAccess = new();
         private List<Book> _bookCollection;
 
         [Fact]
@@ -463,8 +463,7 @@ namespace SqlBulkTools.IntegrationTests
         private async Task<long> BulkInsertAsync(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
@@ -496,8 +495,7 @@ namespace SqlBulkTools.IntegrationTests
         private async Task<long> BulkInsertOrUpdateAsync(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
@@ -526,8 +524,7 @@ namespace SqlBulkTools.IntegrationTests
         private async Task<long> BulkUpdateAsync(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
@@ -554,9 +551,7 @@ namespace SqlBulkTools.IntegrationTests
         private async Task<long> BulkDeleteAsync(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-
+            var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))

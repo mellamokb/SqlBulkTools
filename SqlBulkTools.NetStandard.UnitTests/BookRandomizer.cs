@@ -9,7 +9,6 @@ namespace SqlBulkTools.TestCommon
 {
     public class BookRandomizer
     {
-
         public List<Book> GetRandomCollection(int count)
         {
             var fixture = new Fixture();
@@ -20,7 +19,6 @@ namespace SqlBulkTools.TestCommon
             books = fixture.Build<Book>().Without(x => x.Id).CreateMany(count).ToList();
             return books;
         }
-
     }
 
     public class PriceBuilder : ISpecimenBuilder
@@ -47,8 +45,8 @@ namespace SqlBulkTools.TestCommon
                 pi.Name == "ISBN" &&
                 pi.PropertyType == typeof(string))
 
-            return context.Resolve(typeof(string))
-                    .ToString().Substring(0, 13);
+                return context.Resolve(typeof(string))
+                    .ToString()[..13];
 
             return new NoSpecimen();
         }
@@ -64,7 +62,7 @@ namespace SqlBulkTools.TestCommon
                 pi.PropertyType == typeof(string))
 
                 return context.Resolve(typeof(string))
-                        .ToString().Substring(0, 10);
+                        .ToString()[..10];
 
             return new NoSpecimen();
         }

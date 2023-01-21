@@ -14,8 +14,8 @@ namespace SqlBulkTools.IntegrationTests
     [Collection("IntegrationTests")]
     public class QueryOperationsAsyncIt
     {
-        private readonly BookRandomizer _randomizer = new BookRandomizer();
-        private readonly DataAccess _dataAccess = new DataAccess();
+        private readonly BookRandomizer _randomizer = new();
+        private readonly DataAccess _dataAccess = new();
 
         [Fact]
         public async Task SqlBulkTools_UpdateQuery_SetPriceOnSingleEntity()

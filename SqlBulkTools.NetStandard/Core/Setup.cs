@@ -46,7 +46,7 @@ namespace SqlBulkTools
         /// <param name="ext"></param>
         public Setup(BulkOperations ext)
         {
-            this._ext = ext;
+            _ext = ext;
             _sqlParams = new List<SqlParameter>();
         }
 
@@ -84,7 +84,6 @@ namespace SqlBulkTools
         public QueryForObject<T> ForObject(T entity)
         {
             return new QueryForObject<T>(entity, _sqlParams);
-        }
-       
+        }       
     }
 }

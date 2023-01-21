@@ -13,8 +13,8 @@ namespace SqlBulkTools.IntegrationTests
     [Collection("IntegrationTests")]
     public class QueryOperationsIT
     {
-        private readonly BookRandomizer _randomizer = new BookRandomizer();
-        private readonly DataAccess _dataAccess = new DataAccess();
+        private readonly BookRandomizer _randomizer = new();
+        private readonly DataAccess _dataAccess = new();
 
 
         [Fact]
@@ -245,7 +245,6 @@ namespace SqlBulkTools.IntegrationTests
                         .Update()
                         .Where(x => x.ISBN == isbn)
                         .Commit(conn);
-
                 }
 
                 trans.Complete();
@@ -467,7 +466,6 @@ namespace SqlBulkTools.IntegrationTests
                         .BulkInsert()
                         .Commit(conn);
 
-
                     bulk.Setup<SchemaTest2>()
                         .ForDeleteQuery()
                         .WithTable("SchemaTest")
@@ -590,7 +588,6 @@ namespace SqlBulkTools.IntegrationTests
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
                 {
-
                     bulk.Setup<Book>()
                         .ForCollection(books)
                         .WithTable("Books")
@@ -719,7 +716,6 @@ namespace SqlBulkTools.IntegrationTests
             {
                 using (var con = new SqlConnection(_dataAccess.ConnectionString))
                 {
-
                     var book = new Book()
                     {
                         BestSeller = true,

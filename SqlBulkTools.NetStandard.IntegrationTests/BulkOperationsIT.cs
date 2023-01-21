@@ -20,8 +20,8 @@ namespace SqlBulkTools.IntegrationTests
     public class BulkOperationsIt
     {
         private const int _repeatTimes = 1;
-        private readonly DataAccess _dataAccess = new DataAccess();
-        private readonly BookRandomizer _randomizer = new BookRandomizer();
+        private readonly DataAccess _dataAccess = new();
+        private readonly BookRandomizer _randomizer = new();
         private List<Book> _bookCollection;
 
         [Fact]
@@ -66,7 +66,7 @@ namespace SqlBulkTools.IntegrationTests
             Assert.True(_dataAccess.GetCustomIdentityColumnNameTestList().Count == 30);
         }
 
-        private List<ComplexTypeModel> GetComplexTypeModelList()
+        private static List<ComplexTypeModel> GetComplexTypeModelList()
         {
             var complexTypeModelList = new List<ComplexTypeModel>();
 
@@ -158,14 +158,14 @@ namespace SqlBulkTools.IntegrationTests
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
                 {
-                    _ = bulk.Setup<ComplexTypeModelWithoutAttribute>()
+                    bulk.Setup<ComplexTypeModelWithoutAttribute>()
                         .ForDeleteQuery()
                         .WithTable("ComplexTypeWithoutAttributeTest")
                         .Delete()
                         .AllRecords()
                         .Commit(conn);
 
-                    _ = bulk.Setup<ComplexTypeModelWithoutAttribute>()
+                    bulk.Setup<ComplexTypeModelWithoutAttribute>()
                         .ForCollection(complexTypeModelList)
                         .WithTable("ComplexTypeWithoutAttributeTest")
                         .AddAllColumns()
@@ -222,13 +222,13 @@ namespace SqlBulkTools.IntegrationTests
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
                 {
-                    _ = bulk.Setup<ComplexTypeModel>()
+                    bulk.Setup<ComplexTypeModel>()
                         .ForDeleteQuery()
                         .WithTable("ComplexTypeTest")
                         .Delete()
                         .AllRecords();
 
-                    _ = bulk.Setup<ComplexTypeModel>()
+                    bulk.Setup<ComplexTypeModel>()
                         .ForCollection(complexTypeModelList)
                         .WithTable("ComplexTypeTest")
                         .AddAllColumns()
@@ -440,7 +440,13 @@ namespace SqlBulkTools.IntegrationTests
                 }
 
                 // Add duplicate row
-                var dupBook = fixture.Build<Book>().Without(s => s.ISBN).Create();
+                var dupBook = fixture.Build<Book>()
+                    .Without(s => s.ISBN)
+                    .Without(b => b.PublishDate)
+                    .Without(b => b.CreatedAt)
+                    .Without(b => b.ModifiedAt)
+                    .Without(b => b.InvalidType)
+                    .Create();
                 dupBook.ISBN = _bookCollection.First().ISBN;
                 _bookCollection.Add(dupBook);
 
@@ -448,8 +454,10 @@ namespace SqlBulkTools.IntegrationTests
                 var time = BulkInsertOrUpdateAllColumns(_bookCollection);
                 results.Add(time);
 
-                Assert.Equal(rows + newRows, _dataAccess.GetBookCount());
-
+                Assert.Equal(rows, _dataAccess.GetBookCount());
+                var dupBookInDb = _dataAccess.GetBookList(dupBook.ISBN).First();
+                dupBook.Id = dupBookInDb.Id;
+                Assert.Equivalent(dupBook, dupBookInDb);
             }
 
             var avg = results.Average(l => l);
@@ -523,13 +531,12 @@ namespace SqlBulkTools.IntegrationTests
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
                 {
                     bulk.Setup<Book>()
-                    .ForCollection(_bookCollection)
-                    .WithTable("Books")
-                    .AddAllColumns()
-                    .BulkInsert()
-                    .SetIdentityColumn(x => x.Id, ColumnDirectionType.InputOutput)
-                    .Commit(conn);
-
+                        .ForCollection(_bookCollection)
+                        .WithTable("Books")
+                        .AddAllColumns()
+                        .BulkInsert()
+                        .SetIdentityColumn(x => x.Id, ColumnDirectionType.InputOutput)
+                        .Commit(conn);
 
                     // Update half the rows
                     for (var j = 0; j < rows / 2; j++)
@@ -635,6 +642,7 @@ namespace SqlBulkTools.IntegrationTests
 
                 trans.Complete();
             }
+
             // Assert
             Assert.Equal(testDesc, _dataAccess.GetBookList().First().Description);
         }
@@ -1133,7 +1141,7 @@ namespace SqlBulkTools.IntegrationTests
                 trans.Complete();
             }
 
-            Assert.True(_dataAccess.GetReservedColumnNameTests().Count == 30);
+            Assert.Equal(30, _dataAccess.GetReservedColumnNameTests().Count);
         }
 
         [Fact]
@@ -1513,15 +1521,15 @@ namespace SqlBulkTools.IntegrationTests
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
                 {
                     bulk.Setup()
-                    .ForCollection(_bookCollection.Select(x => new { x.Description, x.ISBN, x.Id, x.Price }))
-                    .WithTable("Books")
-                    .AddColumn(x => x.Id)
-                    .AddColumn(x => x.Description)
-                    .AddColumn(x => x.ISBN)
-                    .AddColumn(x => x.Price)
-                    .BulkInsert()
-                    .SetIdentityColumn(x => x.Id)
-                    .Commit(conn);
+                        .ForCollection(_bookCollection.Select(x => new { x.Description, x.ISBN, x.Id, x.Price }))
+                        .WithTable("Books")
+                        .AddColumn(x => x.Id)
+                        .AddColumn(x => x.Description)
+                        .AddColumn(x => x.ISBN)
+                        .AddColumn(x => x.Price)
+                        .BulkInsert()
+                        .SetIdentityColumn(x => x.Id)
+                        .Commit(conn);
                 }
 
                 trans.Complete();
@@ -2174,7 +2182,7 @@ namespace SqlBulkTools.IntegrationTests
         private long BulkInsert(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope())
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
@@ -2207,7 +2215,7 @@ namespace SqlBulkTools.IntegrationTests
         private long BulkInsertAllColumns(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope(
                                 TransactionScopeOption.RequiresNew,
                                 new TimeSpan(0, 5, 0)))
@@ -2239,7 +2247,7 @@ namespace SqlBulkTools.IntegrationTests
         private long BulkInsertOrUpdate(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope())
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
@@ -2268,8 +2276,7 @@ namespace SqlBulkTools.IntegrationTests
         private long BulkInsertOrUpdateAllColumns(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope())
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))
@@ -2323,8 +2330,7 @@ namespace SqlBulkTools.IntegrationTests
         private long BulkDelete(IEnumerable<Book> col)
         {
             var bulk = new BulkOperations();
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = Stopwatch.StartNew();
             using (var trans = new TransactionScope())
             {
                 using (var conn = new SqlConnection(_dataAccess.ConnectionString))

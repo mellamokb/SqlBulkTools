@@ -71,9 +71,9 @@ namespace SqlBulkTools
             public readonly string Database, Schema, TableName;
             public SchemaKey(string database, string schema, string tableName)
             {
-                this.Database = database;
-                this.Schema = schema;
-                this.TableName = tableName;
+                Database = database;
+                Schema = schema;
+                TableName = tableName;
             }
 
             public string[] ToRestrictions() => new string[4]
@@ -96,6 +96,7 @@ namespace SqlBulkTools
                     && sk.TableName == TableName;
             }
         }
-        Dictionary<SchemaKey, DataTable> schemaCache = new Dictionary<SchemaKey, DataTable>();
+
+        readonly Dictionary<SchemaKey, DataTable> schemaCache = new Dictionary<SchemaKey, DataTable>();
     }
 }
