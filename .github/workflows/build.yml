@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build
-      run: dotnet build --configuration Release
+      run: dotnet build SqlBulkTools.NetStandard.UnitTests --configuration Release
 
     - name: Test
       run: dotnet test SqlBulkTools.NetStandard.UnitTests --configuration Release --no-build
@@ -23,7 +23,7 @@ jobs:
     - name: Pack
       run: |
         dotnet pack --configuration Release --no-build --output . &&
-        dotnet pack --configuration ReleaseSystemData --no-build --output . 
+        dotnet pack --configuration ReleaseSystemData --output . 
 
     - name: Publish the package to nuget.org when we have a new version
       shell: pwsh
