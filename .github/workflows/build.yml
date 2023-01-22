@@ -21,7 +21,9 @@ jobs:
       run: dotnet test SqlBulkTools.NetStandard.UnitTests --configuration Release --no-build
 
     - name: Pack
-      run: dotnet pack --configuration Release --no-build --output .
+      run: |
+        dotnet pack --configuration Release --no-build --output . &&
+        dotnet pack --configuration ReleaseSystemData --no-build --output . 
 
     - name: Publish the package to nuget.org when we have a new version
       shell: pwsh

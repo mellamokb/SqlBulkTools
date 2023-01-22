@@ -1,22 +1,19 @@
-﻿// ReSharper disable once CheckNamespace
+﻿namespace SqlBulkTools;
 
-namespace SqlBulkTools
+/// <summary>
+/// 
+/// </summary>
+public interface IBulkOperations
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface IBulkOperations
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        Setup Setup();
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        Setup<T> Setup<T>() where T : class;
-    }
+    /// <returns></returns>
+    Setup Setup();
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    Setup<T> Setup<T>() where T : class;
 }

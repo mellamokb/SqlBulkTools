@@ -1,13 +1,8 @@
-﻿using System;
+﻿namespace SqlBulkTools;
 
-// ReSharper disable once CheckNamespace
-namespace SqlBulkTools
+internal class SqlBulkToolsException : Exception
 {
-    internal class SqlBulkToolsException : Exception
+    public SqlBulkToolsException(string message) : base(message)
     {
-        public SqlBulkToolsException(string message) : base(message)
-        {
-
-        }
     }
 }

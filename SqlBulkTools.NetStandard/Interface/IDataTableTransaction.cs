@@ -1,17 +1,13 @@
-﻿using System.Data;
+﻿namespace SqlBulkTools;
 
-// ReSharper disable once CheckNamespace
-namespace SqlBulkTools
+/// <summary>
+/// 
+/// </summary>
+public interface IDataTableTransaction
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface IDataTableTransaction
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        DataTable BuildDataTable();
-    }
+    /// <returns></returns>
+    DataTable BuildDataTable();
 }
