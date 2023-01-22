@@ -26,6 +26,7 @@ Now also supports entities of type Dictionary&lt;string, object&gt; for easy imp
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
+		<Configurations>Debug;Release;ReleaseSystemData</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
