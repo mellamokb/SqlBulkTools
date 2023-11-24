@@ -13,7 +13,7 @@ Now also supports entities of type Dictionary&lt;string, object&gt; for easy imp
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 
-		<Version>0.0.12</Version>
+		<Version>0.0.13</Version>
 
 		<PackageIcon>icon-large.png</PackageIcon>
 		<PackageIconUrl>https://github.com/fretje/SqlBulkTools/blob/master/Images/icon-large.png?raw=true</PackageIconUrl>
@@ -35,7 +35,7 @@ Now also supports entities of type Dictionary&lt;string, object&gt; for easy imp
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
 	</ItemGroup>
 	
 </Project>
