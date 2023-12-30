@@ -964,8 +964,8 @@ namespace SqlBulkTools
         /// <param name="schema"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        internal static DataTable GetDatabaseSchema(BulkOperations bulk, SqlConnection conn, string schema, string tableName) =>
-            bulk.Prepare(conn, schema, tableName);
+        internal static DataTable GetDatabaseSchema(BulkOperations bulk, SqlConnection conn, string schema, string tableName, SqlTransaction transaction) =>
+            bulk.Prepare(conn, schema, tableName, transaction);
 
         internal static void InsertToTmpTable(SqlConnection conn, DataTable dt, BulkCopySettings bulkCopySettings, SqlTransaction transaction)
         {

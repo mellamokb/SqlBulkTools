@@ -166,7 +166,7 @@ namespace SqlBulkTools
 
             DataTable dtCols = null;
             if (_outputIdentity == ColumnDirectionType.InputOutput)
-                dtCols = BulkOperationsHelper.GetDatabaseSchema(bulk, connection, _schema, _tableName);
+                dtCols = BulkOperationsHelper.GetDatabaseSchema(bulk, connection, _schema, _tableName, transaction);
 
             //Bulk insert into temp table
             using var bulkcopy = new SqlBulkCopy(connection, _bulkCopySettings.SqlBulkCopyOptions, transaction);
@@ -245,7 +245,7 @@ namespace SqlBulkTools
 
             DataTable dtCols = null;
             if (_outputIdentity == ColumnDirectionType.InputOutput)
-                dtCols = BulkOperationsHelper.GetDatabaseSchema(bulk, connection, _schema, _tableName);
+                dtCols = BulkOperationsHelper.GetDatabaseSchema(bulk, connection, _schema, _tableName, transaction);
 
             using var bulkcopy = new SqlBulkCopy(connection, _bulkCopySettings.SqlBulkCopyOptions, transaction);
             bulkcopy.DestinationTableName = BulkOperationsHelper.GetFullQualifyingTableName(connection.Database, _schema, _tableName);

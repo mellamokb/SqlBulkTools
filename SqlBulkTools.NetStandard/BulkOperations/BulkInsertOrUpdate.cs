@@ -314,7 +314,7 @@ namespace SqlBulkTools
             if (connection.State != ConnectionState.Open)
                 connection.Open();
 
-            var dtCols = BulkOperationsHelper.GetDatabaseSchema(bulk, connection, _schema, _tableName);
+            var dtCols = BulkOperationsHelper.GetDatabaseSchema(bulk, connection, _schema, _tableName, transaction);
 
             try
             {
@@ -415,7 +415,7 @@ namespace SqlBulkTools
             if (connection.State != ConnectionState.Open)
                 await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-            var dtCols = BulkOperationsHelper.GetDatabaseSchema(bulk, connection, _schema, _tableName);
+            var dtCols = BulkOperationsHelper.GetDatabaseSchema(bulk, connection, _schema, _tableName, transaction);
 
             try
             {

@@ -40,24 +40,34 @@ namespace SqlBulkTools
         /// Utility to prefetch schema information meta data for a given SQL table.
         /// Necessary when using Transaction around Bulk Operations.
         /// </summary>
-        public void Prepare(SqlConnection conn, string tableName)
+        public void Prepare(SqlConnection conn, string tableName, SqlTransaction transaction)
         {
             var table = BulkOperationsHelper.GetTableAndSchema(tableName);
-            Prepare(conn, table.Schema, table.Name);
+            Prepare(conn, table.Schema, table.Name, transaction: transaction);
         }
-        internal DataTable Prepare(SqlConnection conn, string schema, string tableName)
+        internal DataTable Prepare(SqlConnection conn, string schema, string tableName, SqlTransaction transaction)
         {
             var sk = new SchemaKey(conn.Database, schema, tableName);
             if (schemaCache.TryGetValue(sk, out var result))
                 return result;
 
-            DataTable dtCols;
+            DataTable dtCols = new DataTable();
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = $"Select * From Information_Schema.Columns Where Table_Name='{tableName}'";
+                cmd.Transaction = transaction;
+                using (var sda = new SqlDataAdapter(cmd))
+                {
+                    sda.Fill(dtCols);
+                }
+            }
+            /*
             using (var cloneConn = (SqlConnection)((ICloneable)conn).Clone())
             {
                 cloneConn.Open();
                 dtCols = cloneConn.GetSchema("Columns", sk.ToRestrictions());
                 cloneConn.Close();
-            }
+            }//*/
 
             if (dtCols.Rows.Count == 0 && schema != null)
                 throw new SqlBulkToolsException(
