@@ -51,10 +51,13 @@ namespace SqlBulkTools
             if (schemaCache.TryGetValue(sk, out var result))
                 return result;
 
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
-
-            var dtCols = conn.GetSchema("Columns", sk.ToRestrictions());
+            DataTable dtCols;
+            using (var cloneConn = (SqlConnection)((ICloneable)conn).Clone())
+            {
+                cloneConn.Open();
+                dtCols = cloneConn.GetSchema("Columns", sk.ToRestrictions());
+                cloneConn.Close();
+            }
 
             if (dtCols.Rows.Count == 0 && schema != null)
                 throw new SqlBulkToolsException(
