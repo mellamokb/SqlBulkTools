@@ -1,24 +1,29 @@
-﻿namespace SqlBulkTools.TestCommon.Model;
+﻿using System;
 
-public class ComplexTypeModelWithoutAttribute
+namespace SqlBulkTools.TestCommon.Model
 {
-    public int Id { get; set; }
 
-    public EstimatedStatsWithoutAttribute MinEstimate { get; set; }
+    public class ComplexTypeModelWithoutAttribute
+    {
+        public int Id { get; set; }
 
-    public EstimatedStatsWithoutAttribute AverageEstimate { get; set; }
+        public EstimatedStatsWithoutAttribute MinEstimate { get; set; }
 
-    public double SearchVolume { get; set; }
+        public EstimatedStatsWithoutAttribute AverageEstimate { get; set; }
 
-    public double Competition { get; set; }
-}
+        public double SearchVolume { get; set; }
 
-public class EstimatedStatsWithoutAttribute
-{
-    public EstimatedStatsWithoutAttribute() => 
-        CreationDate = DateTime.UtcNow;
+        public double Competition { get; set; }
+    }
 
-    public double? TotalCost { get; set; }
+    public class EstimatedStatsWithoutAttribute
+    {
+        public EstimatedStatsWithoutAttribute() =>
+            CreationDate = DateTime.UtcNow;
 
-    public DateTime CreationDate { get; set; }
+        public double? TotalCost { get; set; }
+
+        public DateTime CreationDate { get; set; }
+    }
+
 }

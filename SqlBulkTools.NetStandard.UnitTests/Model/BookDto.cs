@@ -1,6 +1,9 @@
-﻿namespace SqlBulkTools.TestCommon.Model;
-
-public class BookDto
+﻿namespace SqlBulkTools.TestCommon.Model
 {
-    public int Id { get; set; }
+
+    public class BookDto
+    {
+        public int Id { get; set; }
+    }
+
 }

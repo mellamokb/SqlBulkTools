@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32616.157
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34301.259
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlBulkTools.NetStandard", "SqlBulkTools.NetStandard\SqlBulkTools.NetStandard.csproj", "{CE4F978A-AE8A-4F7B-8A2D-3E5A4B00D18F}"
 EndProject
@@ -30,27 +30,20 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-		ReleaseSystemData|Any CPU = ReleaseSystemData|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CE4F978A-AE8A-4F7B-8A2D-3E5A4B00D18F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CE4F978A-AE8A-4F7B-8A2D-3E5A4B00D18F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE4F978A-AE8A-4F7B-8A2D-3E5A4B00D18F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE4F978A-AE8A-4F7B-8A2D-3E5A4B00D18F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE4F978A-AE8A-4F7B-8A2D-3E5A4B00D18F}.ReleaseSystemData|Any CPU.ActiveCfg = ReleaseSystemData|Any CPU
-		{CE4F978A-AE8A-4F7B-8A2D-3E5A4B00D18F}.ReleaseSystemData|Any CPU.Build.0 = ReleaseSystemData|Any CPU
 		{F1E1BFDA-3509-477F-8CF6-A8CA312D60E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F1E1BFDA-3509-477F-8CF6-A8CA312D60E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1E1BFDA-3509-477F-8CF6-A8CA312D60E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1E1BFDA-3509-477F-8CF6-A8CA312D60E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1E1BFDA-3509-477F-8CF6-A8CA312D60E6}.ReleaseSystemData|Any CPU.ActiveCfg = ReleaseSystemData|Any CPU
-		{F1E1BFDA-3509-477F-8CF6-A8CA312D60E6}.ReleaseSystemData|Any CPU.Build.0 = ReleaseSystemData|Any CPU
 		{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}.ReleaseSystemData|Any CPU.ActiveCfg = ReleaseSystemData|Any CPU
-		{FDF981AA-22ED-4FCC-B9C8-A9DD2F0C7B6A}.ReleaseSystemData|Any CPU.Build.0 = ReleaseSystemData|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

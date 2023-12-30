@@ -1,4 +1,6 @@
 ﻿using SqlBulkTools.BulkCopy;
+using System;
+using System.Collections.Generic;
 
 namespace SqlBulkTools
 {

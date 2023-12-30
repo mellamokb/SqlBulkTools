@@ -1,20 +1,25 @@
-﻿namespace SqlBulkTools;
+﻿using System.Data;
 
-/// <summary>
-/// 
-/// </summary>
-public interface IDataTableOperations
+namespace SqlBulkTools
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    SetupDataTable<T> SetupDataTable<T>();
 
     /// <summary>
     /// 
     /// </summary>
-    /// <returns></returns>
-    DataTable BuildPreparedDataDable();
+    public interface IDataTableOperations
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        SetupDataTable<T> SetupDataTable<T>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        DataTable BuildPreparedDataDable();
+    }
+
 }

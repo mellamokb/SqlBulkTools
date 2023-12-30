@@ -1,7 +1,10 @@
-﻿namespace SqlBulkTools.TestCommon.Model;
-
-public class CustomIdentityColumnNameTest
+﻿namespace SqlBulkTools.TestCommon.Model
 {
-    public int Id { get; set; }
-    public string ColumnA { get; set; }
+
+    public class CustomIdentityColumnNameTest
+    {
+        public int Id { get; set; }
+        public string ColumnA { get; set; }
+    }
+
 }

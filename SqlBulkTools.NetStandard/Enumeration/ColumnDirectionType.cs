@@ -1,16 +1,19 @@
-﻿namespace SqlBulkTools.Enumeration;
-
-/// <summary>
-/// 
-/// </summary>
-public enum ColumnDirectionType
+﻿namespace SqlBulkTools.Enumeration
 {
+
     /// <summary>
     /// 
     /// </summary>
-    Input,
-    /// <summary>
-    /// 
-    /// </summary>
-    InputOutput
+    public enum ColumnDirectionType
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        Input,
+        /// <summary>
+        /// 
+        /// </summary>
+        InputOutput
+    }
+
 }

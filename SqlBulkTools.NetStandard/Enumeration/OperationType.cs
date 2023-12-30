@@ -1,9 +1,12 @@
-﻿namespace SqlBulkTools.Enumeration;
-
-internal enum OperationType
+﻿namespace SqlBulkTools.Enumeration
 {
-    Insert,
-    InsertOrUpdate,
-    Update,
-    Delete
+
+    internal enum OperationType
+    {
+        Insert,
+        InsertOrUpdate,
+        Update,
+        Delete
+    }
+
 }

@@ -1,38 +1,42 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SqlBulkTools.TestCommon.Model;
-
-public class ComplexTypeModel
+namespace SqlBulkTools.TestCommon.Model
 {
-    public int Id { get; set; }
 
-    public EstimatedStats MinEstimate { get; set; }
-
-    public EstimatedStats AverageEstimate { get; set; }
-
-    public double SearchVolume { get; set; }
-
-    public double Competition { get; set; }
-}
-
-
-[ComplexType]
-public class EstimatedStats
-{
-    public EstimatedStats()
+    public class ComplexTypeModel
     {
-        CreationDate = DateTime.UtcNow;
+        public int Id { get; set; }
+
+        public EstimatedStats MinEstimate { get; set; }
+
+        public EstimatedStats AverageEstimate { get; set; }
+
+        public double SearchVolume { get; set; }
+
+        public double Competition { get; set; }
     }
 
-    public double? TotalCost { get; set; }
 
-    public DateTime CreationDate { get; set; }
+    [ComplexType]
+    public class EstimatedStats
+    {
+        public EstimatedStats()
+        {
+            CreationDate = DateTime.UtcNow;
+        }
 
-    public DeepComplex Inception { get; set; }
-}
+        public double? TotalCost { get; set; }
 
-[ComplexType]
-public class DeepComplex
-{
-    public string DeepTest { get; set; }
+        public DateTime CreationDate { get; set; }
+
+        public DeepComplex Inception { get; set; }
+    }
+
+    [ComplexType]
+    public class DeepComplex
+    {
+        public string DeepTest { get; set; }
+    }
+
 }

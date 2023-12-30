@@ -1,8 +1,13 @@
-﻿namespace SqlBulkTools;
+﻿using System;
 
-internal class SqlBulkToolsException : Exception
+namespace SqlBulkTools
 {
-    public SqlBulkToolsException(string message) : base(message)
+
+    internal class SqlBulkToolsException : Exception
     {
+        public SqlBulkToolsException(string message) : base(message)
+        {
+        }
     }
+
 }

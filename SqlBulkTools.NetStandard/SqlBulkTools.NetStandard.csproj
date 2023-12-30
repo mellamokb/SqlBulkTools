@@ -1,43 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFramework>net48</TargetFramework>
 	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)'=='ReleaseSystemData'">
-		<PackageId>fretje.SqlBulkTools.SystemDataSqlClient</PackageId>
-	</PropertyGroup>
-	
-	<PropertyGroup Condition="'$(Configuration)'!='ReleaseSystemData'">
-		<PackageId>fretje.SqlBulkTools</PackageId>
-	</PropertyGroup>
-
-	<ItemGroup Condition="'$(Configuration)'=='ReleaseSystemData'">
-		<PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(Configuration)'!='ReleaseSystemData'">
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-	</ItemGroup>
 
 	<PropertyGroup>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<PackageId>mellamokb.SqlBulkTools.SystemDataSqlClient</PackageId>
+		<PackageProjectUrl>https://github.com/mellamokb/SqlBulkTools</PackageProjectUrl>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DocumentationFile>bin\Debug\netstandard2.0\SqlBulkTools.NetStandard.xml</DocumentationFile>
-	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+	</ItemGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DocumentationFile>bin\Release\netstandard2.0\SqlBulkTools.NetStandard.xml</DocumentationFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseSystemData|AnyCPU'">
-	  <DocumentationFile>bin\Release\netstandard2.0\SqlBulkTools.NetStandard.xml</DocumentationFile>
-	</PropertyGroup>
-	
 </Project>

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Product>SqlBulkTools</Product>
-		<Authors>fretje, tiagorosendo, zek99, gtaylor44</Authors>
+		<Authors>mellamokb, fretje, tiagorosendo, zek99, gtaylor44</Authors>
 		<Description>SqlBulkTools features an easy to use fluent interface for performing SQL operations in c#. Supports Bulk Insert, Update, Delete and Merge. Includes advanced features such as output identity, delete entities conditionally (for merging), exclude column(s) from update (for merging), single entity operations and plenty more.
 
 Now also supports entities of type Dictionary&lt;string, object&gt; for easy importing of generic json (e.g. from odata).</Description>
@@ -16,17 +16,17 @@ Now also supports entities of type Dictionary&lt;string, object&gt; for easy imp
 		<Version>0.0.13</Version>
 
 		<PackageIcon>icon-large.png</PackageIcon>
-		<PackageIconUrl>https://github.com/fretje/SqlBulkTools/blob/master/Images/icon-large.png?raw=true</PackageIconUrl>
-		<PackageProjectUrl>https://github.com/fretje/SqlBulkTools</PackageProjectUrl>
+		<PackageIconUrl>https://github.com/mellamokb/SqlBulkTools/blob/master/Images/icon-large.png?raw=true</PackageIconUrl>
+		<PackageProjectUrl>https://github.com/mellamokb/SqlBulkTools</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>SQL BULK BULKINSERT BULKUPDATE</PackageTags>
 
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<ImplicitUsings>disable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
-		<Configurations>Debug;Release;ReleaseSystemData</Configurations>
+		<Configurations>Debug;Release</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -34,8 +34,4 @@ Now also supports entities of type Dictionary&lt;string, object&gt; for easy imp
 		<None Include="../README.md" Pack="true" PackagePath="\" Visible="false" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-	</ItemGroup>
-	
 </Project>

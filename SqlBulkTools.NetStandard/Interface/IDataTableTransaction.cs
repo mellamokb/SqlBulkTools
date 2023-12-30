@@ -1,13 +1,18 @@
-﻿namespace SqlBulkTools;
+﻿using System.Data;
 
-/// <summary>
-/// 
-/// </summary>
-public interface IDataTableTransaction
+namespace SqlBulkTools
 {
+
     /// <summary>
     /// 
     /// </summary>
-    /// <returns></returns>
-    DataTable BuildDataTable();
+    public interface IDataTableTransaction
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        DataTable BuildDataTable();
+    }
+
 }

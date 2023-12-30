@@ -1,10 +1,18 @@
-﻿namespace SqlBulkTools;
+﻿using System.Data;
+using System.Data.SqlClient;
+using System.Threading;
+using System.Threading.Tasks;
 
-internal interface ITransaction
+namespace SqlBulkTools
 {
-    int Commit(IDbConnection connection, IDbTransaction transaction = null);
 
-    int Commit(SqlConnection connection, SqlTransaction transaction);
+    internal interface ITransaction
+    {
+        int Commit(IDbConnection connection, IDbTransaction transaction = null);
 
-    Task<int> CommitAsync(SqlConnection connection, SqlTransaction transaction, CancellationToken cancellationToken);
+        int Commit(SqlConnection connection, SqlTransaction transaction);
+
+        Task<int> CommitAsync(SqlConnection connection, SqlTransaction transaction, CancellationToken cancellationToken);
+    }
+
 }
