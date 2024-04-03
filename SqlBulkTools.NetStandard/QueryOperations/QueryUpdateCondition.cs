@@ -43,7 +43,7 @@ namespace SqlBulkTools
             _columns = columns;
             _customColumnMappings = customColumnMappings;
             _whereConditions = new List<PredicateCondition>();
-            _collationColumnDic = new Dictionary<string, string>();
+            _collationColumnDic = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _sqlParams = sqlParams;
             _conditionSortOrder = 1;
             _propertyInfoList = propertyInfoList;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SqlBulkTools
 {
@@ -23,12 +24,12 @@ namespace SqlBulkTools
         {
             _sqlTimeout = 600;
             _schema = Constants.DefaultSchemaName;
-            Columns = new HashSet<string>();
-            CustomColumnMappings = new Dictionary<string, string>();
+            Columns = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            CustomColumnMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _tableName = tableName;
             _schema = Constants.DefaultSchemaName;
-            Columns = new HashSet<string>();
-            CustomColumnMappings = new Dictionary<string, string>();
+            Columns = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            CustomColumnMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
         }
 
         /// <summary>

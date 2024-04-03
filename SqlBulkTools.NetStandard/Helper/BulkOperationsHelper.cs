@@ -62,10 +62,10 @@ namespace SqlBulkTools
         internal static string BuildCreateTempTable(HashSet<string> columns, DataTable schema,
             ColumnDirectionType outputIdentity)
         {
-            var actualColumns = new Dictionary<string, string>();
-            var actualColumnsMaxCharLength = new Dictionary<string, string>();
-            var actualColumnsNumericPrecision = new Dictionary<string, PrecisionType>();
-            var actualColumnsDateTimePrecision = new Dictionary<string, string>();
+            var actualColumns = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            var actualColumnsMaxCharLength = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            var actualColumnsNumericPrecision = new Dictionary<string, PrecisionType>(StringComparer.CurrentCultureIgnoreCase);
+            var actualColumnsDateTimePrecision = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
             foreach (DataRow row in schema.Rows)
             {
@@ -138,7 +138,7 @@ namespace SqlBulkTools
 
         internal static Dictionary<string, bool> GetNullableColumnDic(DataTable schema)
         {
-            var nullableDic = new Dictionary<string, bool>();
+            var nullableDic = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
 
             foreach (DataRow row in schema.Rows)
             {
@@ -384,7 +384,7 @@ namespace SqlBulkTools
             var command = new StringBuilder();
             var paramsSeparated = new List<string>();
 
-            excludeFromUpdate ??= new HashSet<string>();
+            excludeFromUpdate ??= new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
             command.Append("SET ");
 
@@ -418,7 +418,7 @@ namespace SqlBulkTools
             var paramsSeparated = new List<string>();
 
             // To prevent null reference exception
-            excludeFromUpdate ??= new HashSet<string>();
+            excludeFromUpdate ??= new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
             command.Append("SET ");
 
@@ -865,7 +865,7 @@ namespace SqlBulkTools
 
         internal static HashSet<string> GetAllValueTypeAndStringColumns(List<PropInfo> propertyInfoList)
         {
-            var columns = new HashSet<string>();
+            var columns = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
             foreach (var property in propertyInfoList)
             {

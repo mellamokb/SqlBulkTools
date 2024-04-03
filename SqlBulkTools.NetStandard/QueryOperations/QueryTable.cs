@@ -32,11 +32,11 @@ namespace SqlBulkTools.QueryOperations
         {
             _singleEntity = singleEntity;
             _schema = schema;
-            Columns = new HashSet<string>();
-            CustomColumnMappings = new Dictionary<string, string>();
+            Columns = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            CustomColumnMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _tableName = tableName;
-            Columns = new HashSet<string>();
-            CustomColumnMappings = new Dictionary<string, string>();
+            Columns = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            CustomColumnMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _sqlParams = sqlParams;
             _propertyInfoList = PropInfoList.From<T>(propTypes);
         }

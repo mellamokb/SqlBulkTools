@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace SqlBulkTools
@@ -24,7 +25,7 @@ namespace SqlBulkTools
         /// </summary>
         protected DataTableAbstractColumnSelect(DataTableOperations ext, IEnumerable<T> list, HashSet<string> columns)
         {
-            CustomColumnMappings = new Dictionary<string, string>();
+            CustomColumnMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _dt = null;
             _ext = ext;
             _list = list;

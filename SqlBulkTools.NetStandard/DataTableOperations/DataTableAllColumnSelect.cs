@@ -26,7 +26,7 @@ namespace SqlBulkTools
         /// <param name="propertyInfoList"></param>
         public DataTableAllColumnSelect(DataTableOperations ext, IEnumerable<T> list, HashSet<string> columns, Dictionary<string, int> ordinalDic, List<PropInfo> propertyInfoList) : base(ext, list, columns)
         {
-            _removedColumns = new HashSet<string>();
+            _removedColumns = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
             _ordinalDic = ordinalDic;
             _propertyInfoList = propertyInfoList;
         }

@@ -54,7 +54,7 @@ namespace SqlBulkTools
             DataTable dtCols = new DataTable();
             using (var cmd = conn.CreateCommand())
             {
-                cmd.CommandText = $"Select * From Information_Schema.Columns Where Table_Name='{tableName}'";
+                cmd.CommandText = $"Select * From Information_Schema.Columns Where Table_Name='{tableName}' And Table_Schema='{schema}'";
                 cmd.Transaction = transaction;
                 using (var sda = new SqlDataAdapter(cmd))
                 {

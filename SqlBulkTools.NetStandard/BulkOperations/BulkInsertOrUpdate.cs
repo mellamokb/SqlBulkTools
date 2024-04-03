@@ -42,8 +42,8 @@ namespace SqlBulkTools
             _deletePredicates = new List<PredicateCondition>();
             _parameters = new List<SqlParameter>();
             _conditionSortOrder = 1;
-            _excludeFromUpdate = new HashSet<string>();
-            _nullableColumnDic = new Dictionary<string, bool>();
+            _excludeFromUpdate = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _nullableColumnDic = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
         }
 
         /// <summary>

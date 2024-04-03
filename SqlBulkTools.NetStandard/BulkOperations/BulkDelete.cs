@@ -38,7 +38,7 @@ namespace SqlBulkTools
             _deletePredicates = new List<PredicateCondition>();
             _parameters = new List<SqlParameter>();
             _conditionSortOrder = 1;
-            _nullableColumnDic = new Dictionary<string, bool>();
+            _nullableColumnDic = new Dictionary<string, bool>(StringComparer.CurrentCultureIgnoreCase);
         }
 
         /// <summary>

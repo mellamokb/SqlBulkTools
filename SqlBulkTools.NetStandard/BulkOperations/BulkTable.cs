@@ -33,11 +33,11 @@ namespace SqlBulkTools.BulkCopy
             this.bulk = bulk;
             _list = list;
             _schema = schema;
-            Columns = new HashSet<string>();
-            CustomColumnMappings = new Dictionary<string, string>();
+            Columns = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            CustomColumnMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _tableName = tableName;
-            Columns = new HashSet<string>();
-            CustomColumnMappings = new Dictionary<string, string>();
+            Columns = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            CustomColumnMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _bulkCopySettings = new BulkCopySettings();
             _propertyInfoList = PropInfoList.From<T>(propTypes);
         }

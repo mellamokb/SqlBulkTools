@@ -36,7 +36,7 @@ namespace SqlBulkTools.QueryOperations
             _tableName = tableName;
             _columns = columns;
             _schema = schema;
-            CustomColumnMappings = new Dictionary<string, string>();
+            CustomColumnMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _sqlParams = sqlParams;
             _propertyInfoList = propertyInfoList;
         }

@@ -59,13 +59,13 @@ namespace SqlBulkTools
             _disableAllIndexes = false;
             _customColumnMappings = customColumnMappings;
             _identityColumn = null;
-            _collationColumnDic = new Dictionary<string, string>();
+            _collationColumnDic = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _outputIdentityDic = new Dictionary<int, T>();
             _outputIdentity = ColumnDirectionType.Input;
             _matchTargetOn = new List<string>();
             _bulkCopySettings = bulkCopySettings;
             _tableHint = "HOLDLOCK";
-            _ordinalDic = new Dictionary<string, int>();
+            _ordinalDic = new Dictionary<string, int>(StringComparer.CurrentCultureIgnoreCase);
             _propertyInfoList = propertyInfoList;
         }
 

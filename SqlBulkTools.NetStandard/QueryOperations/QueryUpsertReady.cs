@@ -49,10 +49,10 @@ namespace SqlBulkTools
             _columns = columns;
             _customColumnMappings = customColumnMappings;
             _sqlParams = sqlParams;
-            _matchTargetOn = new HashSet<string>();
+            _matchTargetOn = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
             _outputIdentity = ColumnDirectionType.Input;
-            _excludeFromUpdate = new HashSet<string>();
-            _collationColumnDic = new Dictionary<string, string>();
+            _excludeFromUpdate = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _collationColumnDic = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _propertyInfoList = propertyInfoList;
         }
 

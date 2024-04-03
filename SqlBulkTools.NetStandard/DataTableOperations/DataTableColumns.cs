@@ -23,8 +23,8 @@ namespace SqlBulkTools
         {
             _list = list;
             _ext = ext;
-            Columns = new HashSet<string>();
-            _ordinalDic = new Dictionary<string, int>();
+            Columns = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            _ordinalDic = new Dictionary<string, int>(StringComparer.CurrentCultureIgnoreCase);
             _propertyInfoList = PropInfoList.From<T>(propTypes);
         }
 

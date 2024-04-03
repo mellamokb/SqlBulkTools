@@ -33,8 +33,8 @@ namespace SqlBulkTools
             _schema = schema;
             _whereConditions = new List<PredicateCondition>();
             _parameters = new List<SqlParameter>();
-            _collationColumnDic = new Dictionary<string, string>();
-            _customColumnMappings = new Dictionary<string, string>();
+            _collationColumnDic = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            _customColumnMappings = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
             _conditionSortOrder = 1;
         }
 
